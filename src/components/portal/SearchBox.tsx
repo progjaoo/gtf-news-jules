@@ -1,53 +1,86 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Search, X } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import React, { useState, useRef, useEffect } from "react";
+import { Search, X } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export function SearchBox() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [query, setQuery] = useState('');
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const wrapperRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // Foca no input ao abrir
   useEffect(() => {
-    if (isOpen && inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, [isOpen]);
+    if (open && inputRef.current) inputRef.current.focus();
+  }, [open]);
 
-  const handleClose = () => {
-    setIsOpen(false);
-    setQuery('');
-  };
+  // Fecha ao clicar fora
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
+        setOpen(false);
+        setQuery("");
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Fecha ao rolar a página
+  useEffect(() => {
+    function handleScroll() {
+      if (open) {
+        setOpen(false);
+        setQuery("");
+      }
+    }
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [open]);
 
   return (
-    <div className="relative flex items-center">
-      {!isOpen ? (
+    <div ref={wrapperRef} className="relative">
+      {/* BOTÃO FECHADO – estilo G1 */}
+      {!open && (
         <button
-          onClick={() => setIsOpen(true)}
-          className="p-2 text-muted-foreground hover:text-foreground transition-colors"
-          aria-label="Abrir busca"
+          onClick={() => setOpen(true)}
+          className="
+            flex items-center gap-2 px-4 py-2 rounded-md 
+            bg-[hsl(var(--primary-dark))] text-white font-semibold
+            hover:bg-[hsl(var(--primary))] transition-all
+          "
         >
-          <Search size={18} />
+          <Search size={18} className="text-white" />
+          <span className="uppercase text-sm tracking-wide">Buscar</span>
         </button>
-      ) : (
-        <div className={cn(
-          'flex items-center gap-2 bg-background border border-border rounded-full px-3 py-1.5',
-          'animate-in slide-in-from-right-4 duration-200'
-        )}>
-          <Search size={16} className="text-muted-foreground flex-shrink-0" />
+      )}
+
+      {/* BOX ABERTO */}
+      {open && (
+        <div
+          className={cn(
+            "flex items-center gap-3 px-4 py-2 rounded-md",
+            "bg-white border border-border shadow-md",
+            "animate-in slide-in-from-right-4 duration-200"
+          )}
+        >
+          <Search size={18} className="text-muted-foreground" />
+
           <input
             ref={inputRef}
-            type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Buscar notícias..."
-            className="bg-transparent border-none outline-none text-sm w-40 md:w-56 text-foreground placeholder:text-muted-foreground"
+            className="bg-transparent outline-none w-48 text-sm text-foreground"
           />
+
           <button
-            onClick={handleClose}
-            className="p-1 text-muted-foreground hover:text-foreground transition-colors"
+            onClick={() => {
+              setOpen(false);
+              setQuery("");
+            }}
             aria-label="Fechar busca"
           >
-            <X size={14} />
+            <X size={16} className="text-muted-foreground hover:text-foreground transition-colors" />
           </button>
         </div>
       )}

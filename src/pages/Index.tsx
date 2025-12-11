@@ -9,6 +9,7 @@ import { NewsGrid } from '@/components/portal/NewsGrid';
 import { SectionHeader } from '@/components/portal/SectionHeader';
 import { Footer } from '@/components/portal/Footer';
 import { mockNews, mockNegociosNews } from '@/data/mockNews';
+import { StickyHeader } from '@/components/portal/StickyHeader';
 
 function PortalContent() {
   const mainNews = mockNews[0];
@@ -18,18 +19,15 @@ function PortalContent() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <TopHeader />
-      <EditorialBar />
-      <CategoryNav />
+      <StickyHeader />
 
-      {/* Ad Banner */}
       <AdBanner />
 
       {/* Hero Section */}
       <HeroSection mainNews={mainNews} sideNews={sideNews} />
 
       {/* Main News Grid */}
-      <section className="container pb-8">
+      <section className="container pb-100" margin-top="50px">
         <NewsGrid news={gridNews} columns={3} />
       </section>
 

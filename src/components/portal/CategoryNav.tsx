@@ -30,7 +30,7 @@ export function CategoryNav() {
   return (
     <nav className="bg-card border-b border-border">
       <div className="container">
-        <div className="flex items-center justify-center gap-2 md:gap-6 py-3 overflow-x-auto">
+        <div className="flex items-center justify-center gap-4 py-3 overflow-x-auto no-scrollbar">
           {editorials.map((editorial) => (
             <div
               key={editorial.id}
@@ -41,7 +41,7 @@ export function CategoryNav() {
               <button
                 onClick={() => setEditorial(editorial.id)}
                 className={cn(
-                  'nav-category min-w-fit px-2 py-1',
+                  'nav-category min-w-fit px-5 py-1',
                   currentEditorial === editorial.id && 'opacity-100',
                   currentEditorial !== editorial.id && 'opacity-70 hover:opacity-100'
                 )}
@@ -58,7 +58,7 @@ export function CategoryNav() {
               </button>
 
               {/* Dropdown de subtópicos */}
-              {hoveredEditorial === editorial.id && (
+              {/* {hoveredEditorial === editorial.id && (
                 <div className={cn(
                   'absolute top-full left-0 mt-1 min-w-40 bg-card border border-border rounded-md shadow-lg z-50',
                   'animate-in fade-in-0 zoom-in-95 duration-150'
@@ -75,7 +75,7 @@ export function CategoryNav() {
                     ))}
                   </div>
                 </div>
-              )}
+              )} */}
             </div>
           ))}
         </div>

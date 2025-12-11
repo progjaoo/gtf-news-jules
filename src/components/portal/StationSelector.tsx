@@ -11,16 +11,16 @@ import { cn } from '@/lib/utils';
 // Emissoras - serão alimentadas via API
 interface Station {
   id: string;
-  name: string;
+  name?: string;
   frequency?: string;
   color: string;
 }
 
 const stations: Station[] = [
-  { id: 'gtf-news', name: 'GTF NEWS', frequency: '89.7', color: 'text-primary' },
+  { id: 'gtf-news', name: 'GTF NEWS',color: 'text-primary' },
   { id: 'maravilha-news', name: 'MARAVILHA NEWS', color: 'text-orange-500' },
-  { id: '88fm', name: '88 FM', frequency: '88.0', color: 'text-green-500' },
-  { id: '89maravilha', name: '89 MARAVILHA', frequency: '89.0', color: 'text-purple-500' },
+  { id: '88fm', name: '88 FM', color: 'text-primary' },
+  { id: '89maravilha', name: '89 MARAVILHA', color: 'text-orange-400' },
 ];
 
 export function StationSelector() {

@@ -13,7 +13,7 @@ interface EditorialSectionProps {
 export function EditorialSection({ title, editorial, news }: EditorialSectionProps) {
   return (
     <section className={`editorial-${editorial}`}>
-      <div className="container py-8">
+      <div className="container py-10">
         <SectionHeader title={title} editorial={editorial} />
         <NewsGrid news={news} columns={4} />
       </div>

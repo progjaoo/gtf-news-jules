@@ -10,8 +10,6 @@ export function TopHeader() {
       <div className="container flex items-center justify-between h-12">
         {/* Left: Menu Drawer + Logo */}
         <div className="flex items-center gap-3">
-          <MainDrawer />
-          <div className="h-5 w-px bg-border" />
           <StationSelector />
           <span className="text-sm text-muted-foreground mx-1 hidden sm:inline">|</span>
           <span className="text-sm font-semibold text-primary hidden sm:inline">BRASIL</span>
@@ -19,11 +17,10 @@ export function TopHeader() {
 
         {/* Right: Search + Region */}
         <div className="flex items-center gap-2">
-          <SearchBox />
-          <div className="h-5 w-px bg-border hidden sm:block" />
+          
           <button className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors">
-            <MapPin size={14} />
-            <span className="hidden sm:inline">Rio de Janeiro</span>
+            {/* <MapPin size={14} />
+            <span className="hidden sm:inline">Rio de Janeiro</span> */}
           </button>
         </div>
       </div>
