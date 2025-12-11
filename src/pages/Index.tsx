@@ -1,49 +1,73 @@
-import { Header } from '@/components/portal/Header';
-import { EditorialProvider, useEditorial } from '@/contexts/EditorialContext';
+import { EditorialProvider } from '@/contexts/EditorialContext';
+import { TopHeader } from '@/components/portal/TopHeader';
+import { EditorialBar } from '@/components/portal/EditorialBar';
+import { CategoryNav } from '@/components/portal/CategoryNav';
+import { AdBanner } from '@/components/portal/AdBanner';
+import { HeroSection } from '@/components/portal/HeroSection';
+import { EditorialSection } from '@/components/portal/EditorialSection';
+import { NewsGrid } from '@/components/portal/NewsGrid';
+import { SectionHeader } from '@/components/portal/SectionHeader';
+import { Footer } from '@/components/portal/Footer';
+import { mockNews, mockNegociosNews } from '@/data/mockNews';
 
 function PortalContent() {
-  const { getEditorialLabel } = useEditorial();
+  const mainNews = mockNews[0];
+  const sideNews = mockNews.slice(1, 10);
+  const gridNews = mockNews.slice(2, 8);
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
-      
-      {/* Spacer for fixed header */}
-      <div className="h-[7.5rem] lg:h-[8.5rem]" />
+      {/* Header */}
+      <TopHeader />
+      <EditorialBar />
+      <CategoryNav />
 
-      {/* Demo Content */}
-      <main className="container py-8">
-        <div className="text-center py-20">
-          <span className="badge-editorial mb-4">
-            {getEditorialLabel()}
-          </span>
-          <h1 className="text-4xl lg:text-5xl font-black text-foreground mb-4">
-            GTF<span className="text-primary">News</span>
-          </h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Portal de notícias moderno e editorial. Clique nas editorias no menu para ver a mudança dinâmica de cores.
-          </p>
-          
-          <div className="mt-12 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 max-w-4xl mx-auto">
-            {['news', 'sports', 'business', 'entertainment', 'tech', 'politics'].map((editorial) => (
-              <div
-                key={editorial}
-                className={`editorial-${editorial} p-4 rounded-lg`}
-              >
-                <div className="h-20 rounded-lg bg-primary flex items-center justify-center">
-                  <span className="text-primary-foreground font-bold text-xs uppercase">
-                    {editorial}
-                  </span>
-                </div>
-              </div>
-            ))}
+      {/* Ad Banner */}
+      <AdBanner />
+
+      {/* Hero Section */}
+      <HeroSection mainNews={mainNews} sideNews={sideNews} />
+
+      {/* Main News Grid */}
+      <section className="container pb-8">
+        <NewsGrid news={gridNews} columns={3} />
+      </section>
+
+      {/* Secondary Grid */}
+      <section className="container pb-8">
+        <NewsGrid news={mockNews.slice(8, 14)} columns={3} />
+      </section>
+
+      {/* Negócios Section */}
+      <EditorialSection 
+        title="Negócios" 
+        editorial="negocios" 
+        news={mockNegociosNews.slice(0, 4)} 
+      />
+
+      {/* Theme Sections */}
+      <section className="container py-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div>
+            <SectionHeader title="Tema dois" editorial="nacional" />
+            <NewsGrid news={[mockNews[14]]} columns={1} />
           </div>
-
-          <p className="mt-12 text-sm text-muted-foreground">
-            Aguardando próximos componentes: Hero, Cards de Notícias, Grid Editorial, Footer...
-          </p>
+          <div>
+            <SectionHeader title="Tema dois" editorial="cultura" />
+            <NewsGrid news={[mockNews[15]]} columns={1} />
+          </div>
+          <div>
+            <SectionHeader title="Tema três" editorial="esportes" />
+            <NewsGrid news={[mockNews[10]]} columns={1} />
+          </div>
         </div>
-      </main>
+      </section>
+
+      {/* Bottom Ad Banner */}
+      <AdBanner />
+
+      {/* Footer */}
+      <Footer />
     </div>
   );
 }

@@ -12,8 +12,8 @@ export default {
         sm: "640px",
         md: "768px",
         lg: "1024px",
-        xl: "1280px",
-        "2xl": "1400px",
+        xl: "1200px",
+        "2xl": "1280px",
       },
     },
     extend: {
@@ -29,8 +29,8 @@ export default {
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
-          hover: "hsl(var(--primary-hover))",
-          glow: "hsl(var(--primary-glow))",
+          dark: "hsl(var(--primary-dark))",
+          light: "hsl(var(--primary-light))",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
@@ -47,6 +47,10 @@ export default {
         accent: {
           DEFAULT: "hsl(var(--accent))",
           foreground: "hsl(var(--accent-foreground))",
+          orange: "hsl(var(--accent-orange))",
+          green: "hsl(var(--accent-green))",
+          red: "hsl(var(--accent-red))",
+          purple: "hsl(var(--accent-purple))",
         },
         popover: {
           DEFAULT: "hsl(var(--popover))",
@@ -57,12 +61,13 @@ export default {
           foreground: "hsl(var(--card-foreground))",
         },
         editorial: {
-          news: "hsl(var(--editorial-news))",
-          sports: "hsl(var(--editorial-sports))",
-          business: "hsl(var(--editorial-business))",
-          entertainment: "hsl(var(--editorial-entertainment))",
-          tech: "hsl(var(--editorial-tech))",
-          politics: "hsl(var(--editorial-politics))",
+          noticias: "hsl(var(--editorial-noticias))",
+          nacional: "hsl(var(--editorial-nacional))",
+          esportes: "hsl(var(--editorial-esportes))",
+          negocios: "hsl(var(--editorial-negocios))",
+          inovacao: "hsl(var(--editorial-inovacao))",
+          cultura: "hsl(var(--editorial-cultura))",
+          servicos: "hsl(var(--editorial-servicos))",
         },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
@@ -84,8 +89,6 @@ export default {
         'sm': 'var(--shadow-sm)',
         'md': 'var(--shadow-md)',
         'lg': 'var(--shadow-lg)',
-        'xl': 'var(--shadow-xl)',
-        'editorial': 'var(--shadow-editorial)',
       },
       keyframes: {
         "accordion-down": {
@@ -96,25 +99,10 @@ export default {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
-        "fade-up": {
-          from: { opacity: "0", transform: "translateY(20px)" },
-          to: { opacity: "1", transform: "translateY(0)" },
-        },
-        "slide-down": {
-          from: { opacity: "0", transform: "translateY(-10px)" },
-          to: { opacity: "1", transform: "translateY(0)" },
-        },
-        "pulse-soft": {
-          "0%, 100%": { opacity: "1" },
-          "50%": { opacity: "0.8" },
-        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        "fade-up": "fade-up 0.5s ease-out forwards",
-        "slide-down": "slide-down 0.3s ease-out forwards",
-        "pulse-soft": "pulse-soft 2s ease-in-out infinite",
       },
     },
   },
