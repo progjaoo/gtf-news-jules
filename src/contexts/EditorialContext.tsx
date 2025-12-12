@@ -2,9 +2,9 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 export type EditorialType = 
   | 'noticias' 
-  | 'nacional' 
   | 'esportes' 
   | 'negocios' 
+  | 'nacional' 
   | 'inovacao' 
   | 'cultura' 
   | 'servicos';
@@ -17,9 +17,10 @@ interface EditorialInfo {
 }
 
 export const editorials: EditorialInfo[] = [
-  { id: 'nacional', label: 'NACIONAL', color: 'bg-editorial-nacional', subtopico: 'SUBTÓPICO' },
+  { id: 'noticias', label: 'NOTÍCIAS', color: 'bg-editorial-noticias', subtopico: 'SUBTÓPICO' },
   { id: 'esportes', label: 'ESPORTES', color: 'bg-editorial-esportes', subtopico: 'SUBTÓPICO' },
   { id: 'negocios', label: 'NEGÓCIOS', color: 'bg-editorial-negocios', subtopico: 'SUBTÓPICO' },
+  { id: 'nacional', label: 'NACIONAL', color: 'bg-editorial-nacional', subtopico: 'SUBTÓPICO' },
   { id: 'inovacao', label: 'INOVAÇÃO', color: 'bg-editorial-inovacao', subtopico: 'SUBTÓPICO' },
   { id: 'cultura', label: 'CULTURA', color: 'bg-editorial-cultura', subtopico: 'SUBTÓPICO' },
   { id: 'servicos', label: 'SERVIÇOS', color: 'bg-editorial-servicos', subtopico: 'SUBTÓPICO' },

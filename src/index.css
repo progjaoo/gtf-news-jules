@@ -16,25 +16,30 @@
     --popover: 0 0% 100%;
     --popover-foreground: 220 15% 15%;
 
-    /* Editorial Primary - Default News Blue */
-    --primary: 207 90% 54%;
+    /* Editorial Primary - Default Radio 88 FM Blue */
+    --primary: 203 98% 45%;
     --primary-foreground: 0 0% 100%;
-    --primary-dark: 207 90% 40%;
-    --primary-light: 207 90% 65%;
+    --primary-dark: 203 98% 35%;
+    --primary-light: 203 98% 55%;
 
-    /* Editorial Colors */
-    --editorial-noticias: 207 90% 54%;
-    --editorial-nacional: 207 90% 54%;
-    --editorial-esportes: 145 70% 42%;
-    --editorial-negocios: 207 90% 40%;
-    --editorial-inovacao: 32 95% 55%;
-    --editorial-cultura: 280 65% 55%;
-    --editorial-servicos: 185 75% 45%;
+    /* Editorial Colors - Padronizadas */
+    --editorial-noticias: 8 81% 53%;      /* #E83C25 */
+    --editorial-esportes: 145 93% 34%;    /* #06AA48 */
+    --editorial-negocios: 30 100% 50%;    /* #FF8000 */
+    --editorial-nacional: 0 0% 0%;        /* #000000 */
+    --editorial-inovacao: 101 100% 41%;   /* #42CF00 */
+    --editorial-cultura: 203 98% 45%;     /* #038CE4 */
+    --editorial-servicos: 47 99% 51%;     /* #FEC508 */
+
+    /* Station Colors */
+    --station-88fm: 203 98% 45%;          /* #038CE4 */
+    --station-maravilha: 30 100% 50%;     /* #FF8000 */
+    --station-gtfnews: 0 0% 0%;           /* #000000 */
 
     /* Accent Colors */
-    --accent-orange: 32 95% 55%;
-    --accent-green: 145 70% 42%;
-    --accent-red: 0 75% 55%;
+    --accent-orange: 30 100% 50%;
+    --accent-green: 145 93% 34%;
+    --accent-red: 8 81% 53%;
     --accent-purple: 280 65% 55%;
 
     --secondary: 220 15% 94%;
@@ -115,54 +120,76 @@
     --sidebar-ring: 207 85% 60%;
   }
 
-  /* Editorial Theme Classes */
+  /* Editorial Theme Classes - Cores Padronizadas */
   .editorial-noticias {
-    --primary: 207 90% 54%;
-    --primary-dark: 207 90% 40%;
-    --primary-light: 207 90% 65%;
-    --ring: 207 90% 54%;
+    --primary: 8 81% 53%;
+    --primary-dark: 8 81% 43%;
+    --primary-light: 8 81% 63%;
+    --ring: 8 81% 53%;
   }
 
   .editorial-nacional {
-    --primary: 207 90% 54%;
-    --primary-dark: 207 90% 40%;
-    --primary-light: 207 90% 65%;
-    --ring: 207 90% 54%;
+    --primary: 0 0% 20%;
+    --primary-dark: 0 0% 10%;
+    --primary-light: 0 0% 30%;
+    --ring: 0 0% 20%;
   }
 
   .editorial-esportes {
-    --primary: 145 70% 42%;
-    --primary-dark: 145 70% 35%;
-    --primary-light: 145 70% 55%;
-    --ring: 145 70% 42%;
+    --primary: 145 93% 34%;
+    --primary-dark: 145 93% 24%;
+    --primary-light: 145 93% 44%;
+    --ring: 145 93% 34%;
   }
 
   .editorial-negocios {
-    --primary: 207 90% 40%;
-    --primary-dark: 207 90% 32%;
-    --primary-light: 207 90% 50%;
-    --ring: 207 90% 40%;
+    --primary: 30 100% 50%;
+    --primary-dark: 30 100% 40%;
+    --primary-light: 30 100% 60%;
+    --ring: 30 100% 50%;
   }
 
   .editorial-inovacao {
-    --primary: 32 95% 55%;
-    --primary-dark: 32 95% 45%;
-    --primary-light: 32 95% 65%;
-    --ring: 32 95% 55%;
+    --primary: 101 100% 41%;
+    --primary-dark: 101 100% 31%;
+    --primary-light: 101 100% 51%;
+    --ring: 101 100% 41%;
   }
 
   .editorial-cultura {
-    --primary: 280 65% 55%;
-    --primary-dark: 280 65% 45%;
-    --primary-light: 280 65% 65%;
-    --ring: 280 65% 55%;
+    --primary: 203 98% 45%;
+    --primary-dark: 203 98% 35%;
+    --primary-light: 203 98% 55%;
+    --ring: 203 98% 45%;
   }
 
   .editorial-servicos {
-    --primary: 185 75% 45%;
-    --primary-dark: 185 75% 38%;
-    --primary-light: 185 75% 55%;
-    --ring: 185 75% 45%;
+    --primary: 47 99% 51%;
+    --primary-dark: 47 99% 41%;
+    --primary-light: 47 99% 61%;
+    --ring: 47 99% 51%;
+  }
+
+  /* Station Theme Classes */
+  .station-radio88fm {
+    --primary: 203 98% 45%;
+    --primary-dark: 203 98% 35%;
+    --primary-light: 203 98% 55%;
+    --ring: 203 98% 45%;
+  }
+
+  .station-radio89maravilha {
+    --primary: 30 100% 50%;
+    --primary-dark: 30 100% 40%;
+    --primary-light: 30 100% 60%;
+    --ring: 30 100% 50%;
+  }
+
+  .station-gtfnews {
+    --primary: 0 0% 20%;
+    --primary-dark: 0 0% 10%;
+    --primary-light: 0 0% 30%;
+    --ring: 0 0% 20%;
   }
 }
 

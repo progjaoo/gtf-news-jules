@@ -69,6 +69,11 @@ export default {
           cultura: "hsl(var(--editorial-cultura))",
           servicos: "hsl(var(--editorial-servicos))",
         },
+        station: {
+          "88fm": "hsl(var(--station-88fm))",
+          maravilha: "hsl(var(--station-maravilha))",
+          gtfnews: "hsl(var(--station-gtfnews))",
+        },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",

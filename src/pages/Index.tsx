@@ -1,7 +1,3 @@
-import { EditorialProvider } from '@/contexts/EditorialContext';
-import { TopHeader } from '@/components/portal/TopHeader';
-import { EditorialBar } from '@/components/portal/EditorialBar';
-import { CategoryNav } from '@/components/portal/CategoryNav';
 import { AdBanner } from '@/components/portal/AdBanner';
 import { HeroSection } from '@/components/portal/HeroSection';
 import { EditorialSection } from '@/components/portal/EditorialSection';
@@ -99,11 +95,7 @@ function PortalContent() {
 }
 
 const Index = () => {
-  return (
-    <EditorialProvider>
-      <PortalContent />
-    </EditorialProvider>
-  );
+  return <PortalContent />;
 };
 
 export default Index;

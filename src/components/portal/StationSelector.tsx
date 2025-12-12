@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { ChevronDown } from 'lucide-react';
 import {
   DropdownMenu,
@@ -7,33 +7,16 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
-
-// Emissoras - serão alimentadas via API
-interface Station {
-  id: string;
-  name?: string;
-  frequency?: string;
-  color: string;
-}
-
-const stations: Station[] = [
-  { id: 'gtf-news', name: 'GTF NEWS',color: 'text-primary' },
-  { id: 'maravilha-news', name: 'MARAVILHA NEWS', color: 'text-orange-500' },
-  { id: '88fm', name: '88 FM', color: 'text-primary' },
-  { id: '89maravilha', name: '89 MARAVILHA', color: 'text-orange-400' },
-];
+import { useStation, stations, StationType } from '@/contexts/StationContext';
 
 export function StationSelector() {
-  const [currentStation, setCurrentStation] = useState(stations[0]);
+  const { currentStation, setStation } = useStation();
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button className="flex items-center gap-1 hover:opacity-80 transition-opacity">
-          {currentStation.frequency && (
-            <span className="text-sm text-muted-foreground">{currentStation.frequency}</span>
-          )}
-          <span className={cn('text-sm font-bold', currentStation.color)}>
+          <span className="text-sm font-bold text-primary">
             {currentStation.name}
           </span>
           <ChevronDown size={14} className="text-muted-foreground" />
@@ -43,18 +26,13 @@ export function StationSelector() {
         {stations.map((station) => (
           <DropdownMenuItem
             key={station.id}
-            onClick={() => setCurrentStation(station)}
+            onClick={() => setStation(station.id)}
             className={cn(
               'cursor-pointer',
               currentStation.id === station.id && 'bg-muted'
             )}
           >
-            <div className="flex items-center gap-2">
-              {station.frequency && (
-                <span className="text-xs text-muted-foreground">{station.frequency}</span>
-              )}
-              <span className={cn('font-semibold', station.color)}>{station.name}</span>
-            </div>
+            <span className="font-semibold">{station.name}</span>
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>

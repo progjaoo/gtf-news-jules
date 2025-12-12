@@ -7,7 +7,7 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import ArtigoPage from "./pages/ArtigoPage";
 import { EditorialProvider } from "@/contexts/EditorialContext";
-
+import { StationProvider } from "@/contexts/StationContext";
 
 const queryClient = new QueryClient();
 
@@ -17,19 +17,20 @@ const App = () => (
       <Toaster />
       <Sonner />
 
-      <EditorialProvider>   {/* 🔥 AQUI 🔥 */}
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/noticia/:id" element={<ArtigoPage />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </EditorialProvider>  {/* 🔥 FECHOU 🔥 */}
+      <StationProvider>
+        <EditorialProvider>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/noticia/:id" element={<ArtigoPage />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </EditorialProvider>
+      </StationProvider>
 
     </TooltipProvider>
   </QueryClientProvider>
 );
-
 
 export default App;

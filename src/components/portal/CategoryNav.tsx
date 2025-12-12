@@ -12,6 +12,16 @@ const categoryColors: Record<EditorialType, string> = {
   servicos: 'bg-editorial-servicos',
 };
 
+const categoryTextColors: Record<EditorialType, string> = {
+  noticias: 'text-editorial-noticias',
+  nacional: 'text-editorial-nacional',
+  esportes: 'text-editorial-esportes',
+  negocios: 'text-editorial-negocios',
+  inovacao: 'text-editorial-inovacao',
+  cultura: 'text-editorial-cultura',
+  servicos: 'text-editorial-servicos',
+};
+
 // Subtópicos por editoria - serão alimentados via API
 const subtopics: Record<EditorialType, string[]> = {
   noticias: ['Política', 'Economia', 'Saúde', 'Educação'],
@@ -41,7 +51,7 @@ export function CategoryNav() {
               <button
                 onClick={() => setEditorial(editorial.id)}
                 className={cn(
-                  'nav-category min-w-fit px-5 py-1',
+                  'nav-category min-w-fit px-5 py-1 transition-all duration-200',
                   currentEditorial === editorial.id && 'opacity-100',
                   currentEditorial !== editorial.id && 'opacity-70 hover:opacity-100'
                 )}
@@ -49,8 +59,10 @@ export function CategoryNav() {
                 <div className="flex items-center gap-1.5">
                   <div className={cn('w-2 h-2 rounded-sm', categoryColors[editorial.id])} />
                   <span className={cn(
-                    'nav-category-label',
-                    currentEditorial === editorial.id && 'text-primary'
+                    'nav-category-label transition-colors duration-200',
+                    currentEditorial === editorial.id 
+                      ? categoryTextColors[editorial.id]
+                      : 'text-foreground'
                   )}>
                     {editorial.label}
                   </span>
@@ -58,7 +70,7 @@ export function CategoryNav() {
               </button>
 
               {/* Dropdown de subtópicos */}
-              {/* {hoveredEditorial === editorial.id && (
+              {hoveredEditorial === editorial.id && (
                 <div className={cn(
                   'absolute top-full left-0 mt-1 min-w-40 bg-card border border-border rounded-md shadow-lg z-50',
                   'animate-in fade-in-0 zoom-in-95 duration-150'
@@ -75,7 +87,7 @@ export function CategoryNav() {
                     ))}
                   </div>
                 </div>
-              )} */}
+              )}
             </div>
           ))}
         </div>
