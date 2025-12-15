@@ -2,12 +2,9 @@ import { useStation } from '@/contexts/StationContext';
 import React from 'react';
 
 export function Footer() {
-  const { currentStation } = useStation();
+  // const { currentStation } = useStation();
   return (
-    <footer className="bg-foreground flex items-center text-background py-12 mt-12" style={{
-        backgroundColor: currentStation.color,
-        color: "#fff"
-      }}>
+    <footer className="bg-foreground flex items-center text-background py-12 mt-12" >
       <div className="container">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}

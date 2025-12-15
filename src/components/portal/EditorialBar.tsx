@@ -8,8 +8,8 @@ import logomaravilha from '@/assets/logomaravilha.svg';
 // Mapeamento de logos por station - será alimentado via API
 const stationLogos: Record<string, string> = {
   'radio88fm': logo88,
-  'radio89maravilha': logomaravilha, // Substituir por logoMaravilha.svg quando disponível
-  'gtfnews': logo88, // Manter logo88 até ter logo específica
+  'radio89maravilha': logomaravilha,
+  'gtfnews': logo88, 
 };
 
 export function EditorialBar() {
@@ -28,7 +28,9 @@ export function EditorialBar() {
         </div>
 
         <div className="absolute left-1/2 -translate-x-1/2">
+        <a href="/" className="flex items-center">
           <img src={logoSrc} alt={currentStation.name} className="h-10 w-auto" />
+        </a>
         </div>
 
         <div className="w-[90px] flex justify-end">

@@ -70,6 +70,9 @@ export default {
           servicos: "hsl(var(--editorial-servicos))",
         },
         station: {
+          DEFAULT: "hsl(var(--station-primary))",
+          foreground: "hsl(var(--station-primary-foreground))",
+          
           "88fm": "hsl(var(--station-88fm))",
           maravilha: "hsl(var(--station-maravilha))",
           gtfnews: "hsl(var(--station-gtfnews))",

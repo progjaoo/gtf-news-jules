@@ -7,6 +7,7 @@ import { Footer } from '@/components/portal/Footer';
 import { mockNews, mockNegociosNews } from '@/data/mockNews';
 import { StickyHeader } from '@/components/portal/StickyHeader';
 import { NewsCard } from '@/components/portal/NewsCard';
+import { VerMaisButton } from '@/components/portal/VerMaisButton';
 
 function PortalContent() {
   const mainNews = mockNews[0];
@@ -39,13 +40,14 @@ function PortalContent() {
         editorial="negocios" 
         news={mockNegociosNews.slice(0, 4)} 
       />
+      <VerMaisButton size="full"/>
 
       {/* Theme Sections */}
       <section className="container py-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
             <SectionHeader title="Tema Um" editorial="nacional" />
-            <div className="space-y-4">
+                    <div className="space-y-4">
                       {sideNews.slice(3, 6).map((news) => (
                         <NewsCard 
                           key={news.id} 
@@ -55,10 +57,13 @@ function PortalContent() {
                         />
                       ))}
                     </div>
+                    <VerMaisButton size="medium" />
+
+
           </div>
           <div>
             <SectionHeader title="Tema dois" editorial="cultura" />
-            <div className="space-y-4">
+                    <div className="space-y-4">
                       {sideNews.slice(1, 4).map((news) => (
                         <NewsCard 
                           key={news.id} 
@@ -68,10 +73,11 @@ function PortalContent() {
                         />
                       ))}
                     </div>
+                    <VerMaisButton size="medium"/>
           </div>
           <div>
             <SectionHeader title="Tema três" editorial="esportes" />
-            <div className="space-y-4">
+                    <div className="space-y-4">
                       {sideNews.slice(2, 5).map((news) => (
                         <NewsCard 
                           key={news.id} 
@@ -81,6 +87,7 @@ function PortalContent() {
                         />
                       ))}
                     </div>
+                  <VerMaisButton size="medium"/>
           </div>
         </div>
       </section>
