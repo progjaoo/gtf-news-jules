@@ -683,4 +683,4 @@ GET    /api/admin/noticias/pendentes          # Aguardando revisão
 - Relatórios
 
 **Documentação criada em**: 15/12/2024
-**Versão**: 1.0
+**Versão**: 4.0
