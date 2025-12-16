@@ -497,7 +497,7 @@ const { data: news } = useQuery(`/api/news?editorial=${editorial}`);
 ---
 
 ## implementacao de tela ADMIN e REDATORES PARA PUBLICAR NOTICIAS
-
+```
 src/admin/config/permissions.ts
 export const permissions = {
   [UserRole.ADMIN]: [
