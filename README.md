@@ -496,8 +496,9 @@ const { data: news } = useQuery(`/api/news?editorial=${editorial}`);
 
 ---
 
-##### implementacao de tela ADMIN e REDATORES PARA PUBLICAR NOTICIAS
-// src/admin/config/permissions.ts
+## implementacao de tela ADMIN e REDATORES PARA PUBLICAR NOTICIAS
+
+src/admin/config/permissions.ts
 export const permissions = {
   [UserRole.ADMIN]: [
     'noticias.create',
@@ -534,6 +535,7 @@ export function hasPermission(user: User, permission: string): boolean {
   return permissions[user.role]?.includes(permission) || false;
 }
 ```
+--- 
 
 ### Fluxo de Aprovação
 ```
@@ -554,7 +556,7 @@ export function hasPermission(user: User, permission: string): boolean {
 
 ---
 
-## 📁 Estrutura de Pastas Completa
+## Estrutura de Pastas Completa
 ```
 src/
 ├── portal/                    # Portal Público
@@ -604,7 +606,7 @@ src/
 
 ---
 
-## 🔌 API Endpoints
+## API Endpoints
 
 ### Autenticação
 ```
@@ -614,6 +616,7 @@ POST   /api/admin/refresh-token
 POST   /api/admin/recuperar-senha
 POST   /api/admin/resetar-senha
 GET    /api/admin/me
+
 ```
 
 ### Notícias
@@ -649,34 +652,35 @@ POST   /api/admin/upload/documento
 GET    /api/admin/stats                       # Estatísticas gerais
 GET    /api/admin/noticias/recentes           # Últimas notícias
 GET    /api/admin/noticias/pendentes          # Aguardando revisão
+```
 
-Fase 1 - Auth & Base
+### Fase 1 - Auth & Base
 
- Sistema de autenticação JWT
- Protected routes
- Layout admin base
- Dashboard simples
+- Sistema de autenticação JWT
+- Protected routes
+- Layout admin base
+- Dashboard simples
 
-Fase 2 - CRUD Notícias
+### Fase 2 - CRUD Notícias
 
- Listagem com filtros
- Formulário criar/editar
- Editor rico (TipTap)
- Upload de imagens
+- Listagem com filtros
+- Formulário criar/editar
+- Editor rico (TipTap)
+- Upload de imagens
 
-Fase 3 - Workflow
+### Fase 3 - Workflow
 
- Sistema de status
- Fluxo de aprovação
- Notificações
- Histórico de alterações
+- Sistema de status
+- Fluxo de aprovação
+- Notificações
+- Histórico de alterações
 
-Fase 4 - Gestão
+### Fase 4 - Gestão
 
- Gerenciamento de usuários
- Permissões granulares
- Logs de atividades
- Relatórios
+- Gerenciamento de usuários
+- Permissões granulares
+- Logs de atividades
+- Relatórios
 
 **Documentação criada em**: 15/12/2024
 **Versão**: 1.0
