@@ -4,9 +4,9 @@ import React, { createContext, useContext, useState } from "react";
 export type StationType = "radio88fm" | "radio89maravilha" | "gtfnews";
 
 export const stations = [
-  { id: "radio88fm", name: "88 FM", color: "#038CE4" },
-  { id: "radio89maravilha", name: "89 MARAVILHA", color: "#FF8000" },
-  { id: "gtfnews", name: "GTF NEWS", color: "#000000" },
+  { id: "radio88fm", name: "88 FM", color: "#038CE4" ,homePath: "/radio88fm"},
+  { id: "radio89maravilha", name: "89 MARAVILHA", color: "#FF8000", homePath: "/radio89maravilha"},
+  { id: "gtfnews", name: "GTF NEWS", color: "#000000", homePath: "/gtfnews"},
 ];
 
 interface StationContextType {
@@ -26,7 +26,6 @@ export function StationProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <StationContext.Provider value={{ currentStation, setStation }}>
-      {/* 🔥 EXATAMENTE IGUAL AO CLAUDE → wrapper aplicando tema */}
       <div style={{ "--station-color": currentStation.color } as React.CSSProperties}>
         {children}
       </div>

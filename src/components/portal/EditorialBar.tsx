@@ -4,6 +4,7 @@ import { SearchBox } from './SearchBox';
 import { useStation } from '@/contexts/StationContext';
 import logo88 from '@/assets/logoazul.svg';
 import logomaravilha from '@/assets/logomaravilha.svg';
+import { Link } from 'react-router-dom';
 
 // Mapeamento de logos por station - será alimentado via API
 const stationLogos: Record<string, string> = {
@@ -15,6 +16,8 @@ const stationLogos: Record<string, string> = {
 export function EditorialBar() {
   const { currentStation } = useStation();
   const logoSrc = stationLogos[currentStation.id];
+
+  const stationHomePath = `/${currentStation.id}`;
 
   return (
     <div className="editorial-bar shadow-sm"
@@ -28,16 +31,15 @@ export function EditorialBar() {
         </div>
 
         <div className="absolute left-1/2 -translate-x-1/2">
-        <a href="/" className="flex items-center">
+        <Link to={stationHomePath} className="flex items-center">
           <img src={logoSrc} alt={currentStation.name} className="h-10 w-auto" />
-        </a>
+        </Link>
         </div>
 
         <div className="w-[90px] flex justify-end">
           <SearchBox />
         </div>
       </div>
-
     </div>
   );
 }

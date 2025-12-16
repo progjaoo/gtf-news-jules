@@ -8,6 +8,7 @@ import NotFound from "./pages/NotFound";
 import ArtigoPage from "./pages/ArtigoPage";
 import { EditorialProvider } from "@/contexts/EditorialContext";
 import { StationProvider } from "@/contexts/StationContext";
+import { StationRoute } from "./contexts/StationRoute";
 
 const queryClient = new QueryClient();
 
@@ -20,7 +21,30 @@ const App = () => (
           <EditorialProvider>
             <BrowserRouter>
               <Routes>
-                <Route path="/" element={<Index />} />
+                <Route
+                path="/radio88fm"
+                element={
+                  <StationRoute stationId="radio88fm">
+                    <Index />
+                  </StationRoute>
+                }
+              />
+              <Route
+                path="/radio89maravilha"
+                element={
+                  <StationRoute stationId="radio89maravilha">
+                    <Index />
+                  </StationRoute>
+                }
+              />
+              <Route
+                path="/gtfnews"
+                element={
+                  <StationRoute stationId="gtfnews">
+                    <Index />
+                  </StationRoute>
+                }
+              />
                 <Route path="/noticia/:id" element={<ArtigoPage />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
@@ -32,3 +56,5 @@ const App = () => (
 );
 
 export default App;
+
+// ajustei tudo, porém nao funcionou, veja o App.tsx, veja o que faltou:

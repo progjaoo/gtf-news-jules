@@ -7,16 +7,18 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
+import { useNavigate } from 'react-router-dom';
 import { useStation, stations, StationType } from '@/contexts/StationContext';
 
 const stationTextColors: Record<StationType, string> = {
-  'radio88fm': 'text-station-88fm',
-  'radio89maravilha': 'text-station-maravilha',
-  'gtfnews': 'text-station-gtfnews',
+  radio88fm: 'text-station-88fm',
+  radio89maravilha: 'text-station-maravilha',
+  gtfnews: 'text-station-gtfnews',
 };
 
 export function StationSelector() {
-  const { currentStation, setStation } = useStation();
+  const { currentStation } = useStation();
+  const navigate = useNavigate();
 
   return (
     <DropdownMenu>
@@ -28,11 +30,12 @@ export function StationSelector() {
           <ChevronDown size={14} className="text-muted-foreground" />
         </button>
       </DropdownMenuTrigger>
+
       <DropdownMenuContent align="start" className="bg-card border-border z-50">
         {stations.map((station) => (
           <DropdownMenuItem
             key={station.id}
-            onClick={() => setStation(station.id)}
+            onClick={() => navigate(station.homePath)}
             className={cn(
               'cursor-pointer',
               currentStation.id === station.id && 'bg-muted'
