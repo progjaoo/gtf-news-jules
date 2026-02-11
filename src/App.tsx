@@ -17,13 +17,12 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-        <StationProvider>
-          <EditorialProvider>
-            <BrowserRouter>
-              <Routes>
-                <Route path="/" element={<Navigate to="/radio88fm" replace />} />
-
-                <Route
+      <StationProvider>
+        <EditorialProvider>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Navigate to="/radio88fm" replace />} />
+              <Route
                 path="/radio88fm"
                 element={
                   <StationRoute stationId="radio88fm">
@@ -47,12 +46,12 @@ const App = () => (
                   </StationRoute>
                 }
               />
-                <Route path="/noticia/:id" element={<ArtigoPage />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </BrowserRouter>
-          </EditorialProvider>
-        </StationProvider>
+              <Route path="/noticia/:id" element={<ArtigoPage />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </EditorialProvider>
+      </StationProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );
