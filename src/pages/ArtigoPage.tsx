@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import { StickyHeader } from "@/components/portal/StickyHeader";
 import { Footer } from "@/components/portal/Footer";
 import { NewsCard } from "@/components/portal/NewsCard";
-import { useArticles } from "@/hooks/useArticles";
+import { useArticles, useArticleByDocumentId } from "@/hooks/useArticles";
 
 const editorialColors: Record<string, string> = {
   noticias: "bg-editorial-noticias",
@@ -16,10 +16,10 @@ const editorialColors: Record<string, string> = {
 
 export default function ArtigoPage() {
   const { id } = useParams();
-  const { data: articles, isLoading } = useArticles();
+  const { data: noticia, isLoading } = useArticleByDocumentId(id || "");
+  const { data: articles } = useArticles();
 
-  const allNews = articles || [];
-  const noticia = allNews.find((n) => n.id === Number(id) || n.slug === id);
+  const relatedNews = (articles || []).filter((n) => n.documentId !== id).slice(0, 4);
 
   if (isLoading) {
     return (
@@ -45,9 +45,6 @@ export default function ArtigoPage() {
     );
   }
 
-  // Conteúdo real da API ou texto placeholder
-  const hasContent = !!noticia.content;
-
   return (
     <div className="bg-background">
       <StickyHeader />
@@ -61,7 +58,7 @@ export default function ArtigoPage() {
             {/* EDITORIA */}
             <div className="flex items-center gap-2 mb-4">
               <div
-                className={`w-3 h-3 rounded-sm ${editorialColors[noticia.editoria]}`}
+                className={`w-3 h-3 rounded-sm ${editorialColors[noticia.editoria] || ""}`}
               />
               <span className="text-primary font-semibold uppercase text-sm">
                 {noticia.editoria}
@@ -103,24 +100,16 @@ export default function ArtigoPage() {
 
             {/* TEXTO */}
             <div className="prose prose-lg max-w-none">
-              {hasContent ? (
+              {noticia.content ? (
                 <div
                   dangerouslySetInnerHTML={{
-                    __html: noticia.content!.replace(/\n/g, "<br />"),
+                    __html: noticia.content.replace(/\n/g, "<br />"),
                   }}
                 />
               ) : (
-                <>
-                  <p>
-                    Este é um texto de demonstração da matéria. Em breve isso será
-                    substituído pelo conteúdo real retornado da API com corpo completo
-                    da notícia.
-                  </p>
-                  <br />
-                  <p>
-                    Lorem ipsum dolor sit amet consectetur, adipisicing elit. Unde dolorem, odit illum odio quas voluptatibus libero id.
-                  </p>
-                </>
+                <p className="text-muted-foreground">
+                  Conteúdo não disponível.
+                </p>
               )}
             </div>
 
@@ -142,19 +131,15 @@ export default function ArtigoPage() {
               <h3 className="text-lg font-bold mb-4">
                 Veja também
               </h3>
-
               <div className="space-y-4">
-                {allNews
-                  .filter((n) => n.id !== noticia.id)
-                  .slice(0, 4)
-                  .map((news) => (
-                    <NewsCard
-                      key={news.id}
-                      news={news}
-                      variant="horizontal"
-                      showSubtitle={false}
-                    />
-                  ))}
+                {relatedNews.map((news) => (
+                  <NewsCard
+                    key={news.id}
+                    news={news}
+                    variant="horizontal"
+                    showSubtitle={false}
+                  />
+                ))}
               </div>
             </div>
           </aside>
