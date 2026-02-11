@@ -8,11 +8,17 @@ import { mockNews, mockNegociosNews } from '@/data/mockNews';
 import { StickyHeader } from '@/components/portal/StickyHeader';
 import { NewsCard } from '@/components/portal/NewsCard';
 import { VerMaisButton } from '@/components/portal/VerMaisButton';
+import { useArticles } from '@/hooks/useArticles';
 
 function PortalContent() {
-  const mainNews = mockNews[0];
-  const sideNews = mockNews.slice(1, 10);
-  const gridNews = mockNews.slice(2, 8);
+  const { data: articles, isLoading } = useArticles();
+  
+  // Usa artigos da API ou fallback para mock
+  const allNews = articles && articles.length > 0 ? articles : mockNews;
+  
+  const mainNews = allNews[0];
+  const sideNews = allNews.slice(1, 10);
+  const gridNews = allNews.slice(2, 8);
 
   return (
     <div className="min-h-screen bg-background">

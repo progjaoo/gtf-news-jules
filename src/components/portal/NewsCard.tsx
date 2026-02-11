@@ -10,6 +10,8 @@ export interface NewsItem {
   imagem: string;
   editoria: EditorialType;
   dataPublicacao: string;
+  slug?: string;
+  content?: string;
 }
 
 interface NewsCardProps {
