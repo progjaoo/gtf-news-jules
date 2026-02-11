@@ -4,7 +4,6 @@ import { EditorialSection } from '@/components/portal/EditorialSection';
 import { NewsGrid } from '@/components/portal/NewsGrid';
 import { SectionHeader } from '@/components/portal/SectionHeader';
 import { Footer } from '@/components/portal/Footer';
-import { mockNews, mockNegociosNews } from '@/data/mockNews';
 import { StickyHeader } from '@/components/portal/StickyHeader';
 import { NewsCard } from '@/components/portal/NewsCard';
 import { VerMaisButton } from '@/components/portal/VerMaisButton';
@@ -13,8 +12,7 @@ import { useArticles } from '@/hooks/useArticles';
 function PortalContent() {
   const { data: articles, isLoading } = useArticles();
   
-  // Usa artigos da API ou fallback para mock
-  const allNews = articles && articles.length > 0 ? articles : mockNews;
+  const allNews = articles || [];
   
   const mainNews = allNews[0];
   const sideNews = allNews.slice(1, 10);
@@ -37,14 +35,14 @@ function PortalContent() {
 
       {/* Secondary Grid */}
       <section className="container pb-8">
-        <NewsGrid news={mockNews.slice(8, 0)} columns={3} />
+        <NewsGrid news={allNews.slice(8)} columns={3} />
       </section>
 
       {/* Negócios Section */}
       <EditorialSection 
         title="Negócios" 
         editorial="negocios" 
-        news={mockNegociosNews.slice(0, 4)} 
+        news={allNews.filter(n => n.editoria === 'negocios').slice(0, 4)} 
       />
       <VerMaisButton size="full"/>
 

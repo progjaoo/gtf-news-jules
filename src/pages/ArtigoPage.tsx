@@ -1,5 +1,4 @@
 import { useParams } from "react-router-dom";
-import { mockNews } from "@/data/mockNews";
 import { StickyHeader } from "@/components/portal/StickyHeader";
 import { Footer } from "@/components/portal/Footer";
 import { NewsCard } from "@/components/portal/NewsCard";
@@ -19,8 +18,7 @@ export default function ArtigoPage() {
   const { id } = useParams();
   const { data: articles, isLoading } = useArticles();
 
-  // Busca nos artigos da API ou fallback para mock
-  const allNews = articles && articles.length > 0 ? articles : mockNews;
+  const allNews = articles || [];
   const noticia = allNews.find((n) => n.id === Number(id) || n.slug === id);
 
   if (isLoading) {
