@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 export interface NewsItem {
   id: number;
+  documentId: string;
   titulo: string;
   subtitulo?: string;
   imagem: string;
@@ -42,7 +43,7 @@ export function NewsCard({
   const navigate = useNavigate();
 
   const openArticle = () => {
-    navigate(`/noticia/${news.id}`);
+    navigate(`/noticia/${news.documentId}`);
   };
 
   const isSmall = variant === "small";

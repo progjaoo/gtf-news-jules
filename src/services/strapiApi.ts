@@ -45,6 +45,7 @@ function mapEditoria(editoria?: string): EditorialType {
 export function strapiToNewsItem(article: StrapiArticle): NewsItem {
   return {
     id: article.id,
+    documentId: article.documentId,
     titulo: article.title,
     subtitulo: article.description?.trim() || undefined,
     imagem: article.image?.url
@@ -70,4 +71,16 @@ export async function fetchArticleBySlug(slug: string): Promise<NewsItem | null>
   const json: StrapiResponse = await res.json();
   if (json.data.length === 0) return null;
   return strapiToNewsItem(json.data[0]);
+}
+
+interface StrapiSingleResponse {
+  data: StrapiArticle;
+}
+
+export async function fetchArticleByDocumentId(documentId: string): Promise<NewsItem | null> {
+  const res = await fetch(`${STRAPI_BASE_URL}/api/articles/${documentId}`);
+  if (!res.ok) throw new Error(`Strapi API error: ${res.status}`);
+  const json: StrapiSingleResponse = await res.json();
+  if (!json.data) return null;
+  return strapiToNewsItem(json.data);
 }

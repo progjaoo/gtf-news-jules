@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { fetchArticles, fetchArticleBySlug } from '@/services/strapiApi';
+import { fetchArticles, fetchArticleBySlug, fetchArticleByDocumentId } from '@/services/strapiApi';
 import { NewsItem } from '@/components/portal/NewsCard';
 
 export function useArticles() {
@@ -16,6 +16,16 @@ export function useArticleBySlug(slug: string) {
     queryKey: ['article', slug],
     queryFn: () => fetchArticleBySlug(slug),
     enabled: !!slug,
+    staleTime: 1000 * 60 * 5,
+    retry: 1,
+  });
+}
+
+export function useArticleByDocumentId(documentId: string) {
+  return useQuery<NewsItem | null>({
+    queryKey: ['article', 'doc', documentId],
+    queryFn: () => fetchArticleByDocumentId(documentId),
+    enabled: !!documentId,
     staleTime: 1000 * 60 * 5,
     retry: 1,
   });
