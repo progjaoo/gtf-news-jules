@@ -3,11 +3,19 @@ import { NewsCard, NewsItem } from './NewsCard';
 import { cn } from '@/lib/utils';
 
 interface HeroSectionProps {
-  mainNews: NewsItem;
+  mainNews?: NewsItem;
   sideNews: NewsItem[];
 }
 
 export function HeroSection({ mainNews, sideNews }: HeroSectionProps) {
+  if (!mainNews) {
+    return (
+      <section className="container py-6">
+        <p className="text-muted-foreground text-center py-10">Carregando notícias...</p>
+      </section>
+    );
+  }
+
   return (
     <section className="container py-6">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
