@@ -39,3 +39,9 @@ export async function fetchTemaEditorial(id: number): Promise<TemaEditorialApi> 
   if (!res.ok) throw new Error(`Tema Editorial API error: ${res.status}`);
   return res.json();
 }
+
+export async function fetchAllTemasEditoriais(): Promise<TemaEditorialApi[]> {
+  const res = await fetch(`${DOTNET_BASE_URL}/api/tema-editorial`);
+  if (!res.ok) throw new Error(`Temas Editoriais API error: ${res.status}`);
+  return res.json();
+}

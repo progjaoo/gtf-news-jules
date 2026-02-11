@@ -1,5 +1,5 @@
 import React from 'react';
-import { useEditorial, editorials, EditorialType } from '@/contexts/EditorialContext';
+import { useEditorial, EditorialType } from '@/contexts/EditorialContext';
 import { cn } from '@/lib/utils';
 
 const categoryColors: Record<EditorialType, string> = {
@@ -23,7 +23,7 @@ const categoryTextColors: Record<EditorialType, string> = {
 };
 
 export function CategoryNav() {
-  const { currentEditorial, setEditorial } = useEditorial();
+  const { currentEditorial, setEditorial, editorials } = useEditorial();
 
   return (
     <nav className="bg-card border-b border-border">

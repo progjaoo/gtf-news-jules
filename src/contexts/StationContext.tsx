@@ -1,27 +1,67 @@
 // StationContext.tsx
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { fetchEmissora, EmissoraApi } from "@/services/dotnetApi";
 
 export type StationType = "radio88fm" | "radio89maravilha" | "gtfnews";
 
-export const stations = [
-  { id: "radio88fm", name: "88 FM", color: "#038CE4" ,homePath: "/radio88fm"},
-  { id: "radio89maravilha", name: "89 MARAVILHA", color: "#FF8000", homePath: "/radio89maravilha"},
-  { id: "gtfnews", name: "GTF NEWS", color: "#000000", homePath: "/gtfnews"},
+// Mapeamento station → ID na API .NET
+const stationApiIds: Record<StationType, number> = {
+  radio88fm: 1,
+  radio89maravilha: 4,
+  gtfnews: 4, // mesmo ID conforme informado
+};
+
+// Fallback local caso API esteja offline
+const fallbackStations = [
+  { id: "radio88fm", name: "88 FM", color: "#038CE4", homePath: "/radio88fm" },
+  { id: "radio89maravilha", name: "89 MARAVILHA", color: "#FF8000", homePath: "/radio89maravilha" },
+  { id: "gtfnews", name: "GTF NEWS", color: "#000000", homePath: "/gtfnews" },
 ];
 
+export const stations = fallbackStations;
+
+interface StationData {
+  id: string;
+  name: string;
+  color: string;
+  homePath: string;
+  apiData?: EmissoraApi;
+}
+
 interface StationContextType {
-  currentStation: (typeof stations)[number];
+  currentStation: StationData;
   setStation: (id: StationType) => void;
 }
 
 const StationContext = createContext<StationContextType | undefined>(undefined);
 
 export function StationProvider({ children }: { children: React.ReactNode }) {
-  const [currentStation, setCurrentStationState] = useState(stations[0]);
+  const [stationId, setStationId] = useState<StationType>("radio88fm");
+
+  const apiId = stationApiIds[stationId];
+
+  const { data: emissoraData } = useQuery({
+    queryKey: ["emissora", apiId],
+    queryFn: () => fetchEmissora(apiId),
+    staleTime: 1000 * 60 * 30,
+    retry: 1,
+  });
+
+  const fallback = fallbackStations.find((s) => s.id === stationId)!;
+
+  const currentStation: StationData = emissoraData
+    ? {
+        id: stationId,
+        name: emissoraData.nomeSocial,
+        color: emissoraData.temaPrincipal,
+        homePath: `/${stationId}`,
+        apiData: emissoraData,
+      }
+    : fallback;
 
   const setStation = (id: StationType) => {
-    const s = stations.find(x => x.id === id);
-    if (s) setCurrentStationState(s);
+    setStationId(id);
   };
 
   return (
