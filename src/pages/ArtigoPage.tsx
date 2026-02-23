@@ -2,32 +2,21 @@ import { useParams } from "react-router-dom";
 import { StickyHeader } from "@/components/portal/StickyHeader";
 import { Footer } from "@/components/portal/Footer";
 import { NewsCard } from "@/components/portal/NewsCard";
-import { useArticles, useArticleByDocumentId } from "@/hooks/useArticles";
-
-const editorialColors: Record<string, string> = {
-  noticias: "bg-editorial-noticias",
-  nacional: "bg-editorial-nacional",
-  esportes: "bg-editorial-esportes",
-  negocios: "bg-editorial-negocios",
-  inovacao: "bg-editorial-inovacao",
-  cultura: "bg-editorial-cultura",
-  servicos: "bg-editorial-servicos",
-};
+import { usePostById, usePosts } from "@/hooks/useArticles";
 
 export default function ArtigoPage() {
   const { id } = useParams();
-  const { data: noticia, isLoading } = useArticleByDocumentId(id || "");
-  const { data: articles } = useArticles();
+  const postId = Number(id) || 0;
+  const { data: noticia, isLoading } = usePostById(postId);
+  const { data: allPosts } = usePosts();
 
-  const relatedNews = (articles || []).filter((n) => n.documentId !== id).slice(0, 4);
+  const relatedNews = (allPosts || []).filter((n) => n.id !== postId).slice(0, 4);
 
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background">
         <StickyHeader />
-        <div className="p-20 text-center text-2xl text-muted-foreground">
-          Carregando...
-        </div>
+        <div className="p-20 text-center text-2xl text-muted-foreground">Carregando...</div>
         <Footer />
       </div>
     );
@@ -37,9 +26,7 @@ export default function ArtigoPage() {
     return (
       <div className="min-h-screen bg-background">
         <StickyHeader />
-        <div className="p-20 text-center text-2xl font-semibold">
-          Notícia não encontrada.
-        </div>
+        <div className="p-20 text-center text-2xl font-semibold">Notícia não encontrada.</div>
         <Footer />
       </div>
     );
@@ -52,93 +39,70 @@ export default function ArtigoPage() {
       <div className="max-w-[1200px] mx-auto px-4 mt-6">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-10 items-start">
 
-          {/* CONTEÚDO DO ARTIGO */}
+          {/* CONTEÚDO */}
           <main className="bg-white rounded-xl shadow-sm p-8">
-
             {/* EDITORIA */}
             <div className="flex items-center gap-2 mb-4">
-              <div
-                className={`w-3 h-3 rounded-sm ${editorialColors[noticia.editoria] || ""}`}
-              />
-              <span className="text-primary font-semibold uppercase text-sm">
-                {noticia.editoria}
+              <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: noticia.corTema }} />
+              <span className="font-semibold uppercase text-sm" style={{ color: noticia.corTema }}>
+                {noticia.editorial}
               </span>
             </div>
 
             {/* TÍTULO */}
-            <h1 className="text-3xl md:text-4xl font-bold mb-4">
-              {noticia.titulo}
-            </h1>
+            <h1 className="text-3xl md:text-4xl font-bold mb-4">{noticia.titulo}</h1>
 
             {/* SUBTÍTULO */}
             {noticia.subtitulo && (
-              <p className="text-lg text-muted-foreground mb-6">
-                {noticia.subtitulo}
-              </p>
+              <p className="text-lg text-muted-foreground mb-6">{noticia.subtitulo}</p>
             )}
 
-            {/* DATA */}
-            <div className="text-sm text-muted-foreground mb-6">
-              Publicado em{" "}
-              {new Date(noticia.dataPublicacao).toLocaleDateString("pt-BR", {
-                day: "2-digit",
-                month: "2-digit",
-                year: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
-              })}
+            {/* META */}
+            <div className="flex flex-wrap gap-4 text-sm text-muted-foreground mb-6">
+              {noticia.publicadoEm && (
+                <span>
+                  Publicado em{" "}
+                  {new Date(noticia.publicadoEm).toLocaleDateString("pt-BR", {
+                    day: "2-digit", month: "2-digit", year: "numeric",
+                    hour: "2-digit", minute: "2-digit",
+                  })}
+                </span>
+              )}
+              {noticia.usuarioCriacao && <span>Por {noticia.usuarioCriacao}</span>}
+              {noticia.cidade && <span>{noticia.cidade}</span>}
             </div>
 
             {/* IMAGEM */}
-            <div className="rounded-lg overflow-hidden mb-8">
-              <img
-                src={noticia.imagem}
-                alt={noticia.titulo}
-                className="w-full"
-              />
-            </div>
+            {noticia.imagem && (
+              <div className="rounded-lg overflow-hidden mb-8">
+                <img src={noticia.imagem} alt={noticia.titulo} className="w-full" />
+              </div>
+            )}
 
-            {/* TEXTO */}
+            {/* CONTEÚDO */}
             <div className="prose prose-lg max-w-none">
-              {noticia.content ? (
-                <div
-                  dangerouslySetInnerHTML={{
-                    __html: noticia.content.replace(/\n/g, "<br />"),
-                  }}
-                />
+              {noticia.conteudo ? (
+                <div dangerouslySetInnerHTML={{ __html: noticia.conteudo.replace(/\n/g, "<br />") }} />
               ) : (
-                <p className="text-muted-foreground">
-                  Conteúdo não disponível.
-                </p>
+                <p className="text-muted-foreground">Conteúdo não disponível.</p>
               )}
             </div>
 
             {/* COMENTÁRIOS */}
             <div className="mt-16 border-t pt-8">
               <h2 className="text-2xl font-bold mb-4">Comentários</h2>
-              <p className="text-muted-foreground mb-4">
-                Para comentar, faça login na plataforma.
-              </p>
-              <button className="px-6 py-3 bg-foreground text-background rounded-md font-semibold">
-                Entrar
-              </button>
+              <p className="text-muted-foreground mb-4">Para comentar, faça login na plataforma.</p>
+              <button className="px-6 py-3 bg-foreground text-background rounded-md font-semibold">Entrar</button>
             </div>
           </main>
 
-          {/* SIDEBAR — NOTÍCIAS RELACIONADAS */}
+          {/* SIDEBAR */}
           <aside className="hidden lg:block sticky top-28">
             <div className="bg-white rounded-xl shadow-sm p-4">
-              <h3 className="text-lg font-bold mb-4">
-                Veja também
-              </h3>
+              <h3 className="text-lg font-bold mb-4">Veja também</h3>
               <div className="space-y-4">
                 {relatedNews.map((news) => (
-                  <NewsCard
-                    key={news.id}
-                    news={news}
-                    variant="horizontal"
-                    showSubtitle={false}
-                  />
+                  <NewsCard key={news.id} news={news} variant="horizontal" showSubtitle={false} />
                 ))}
               </div>
             </div>
