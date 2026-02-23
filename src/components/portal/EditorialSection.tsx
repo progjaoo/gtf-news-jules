@@ -1,13 +1,13 @@
 import React from 'react';
-import { NewsItem } from './NewsCard';
 import { SectionHeader } from './SectionHeader';
 import { NewsGrid } from './NewsGrid';
 import { EditorialType } from '@/contexts/EditorialContext';
+import { PostApi } from '@/services/dotnetApi';
 
 interface EditorialSectionProps {
   title: string;
   editorial: EditorialType;
-  news: NewsItem[];
+  news: PostApi[];
 }
 
 export function EditorialSection({ title, editorial, news }: EditorialSectionProps) {

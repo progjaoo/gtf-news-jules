@@ -1,8 +1,9 @@
 import React from 'react';
-import { NewsCard, NewsItem } from './NewsCard';
+import { NewsCard } from './NewsCard';
+import { PostApi } from '@/services/dotnetApi';
 
 interface NewsGridProps {
-  news: NewsItem[];
+  news: PostApi[];
   columns?: 1 | 2 | 3 | 4;
 }
 

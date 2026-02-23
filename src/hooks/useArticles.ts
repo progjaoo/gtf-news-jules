@@ -1,32 +1,37 @@
 import { useQuery } from '@tanstack/react-query';
-import { fetchArticles, fetchArticleBySlug, fetchArticleByDocumentId } from '@/services/strapiApi';
-import { NewsItem } from '@/components/portal/NewsCard';
+import { fetchPostsPublic, searchPosts, PostApi } from '@/services/dotnetApi';
 
-export function useArticles() {
-  return useQuery<NewsItem[]>({
-    queryKey: ['articles'],
-    queryFn: fetchArticles,
+export function usePosts() {
+  return useQuery<PostApi[]>({
+    queryKey: ['posts-public'],
+    queryFn: fetchPostsPublic,
     staleTime: 1000 * 60 * 5,
     retry: 1,
   });
 }
 
-export function useArticleBySlug(slug: string) {
-  return useQuery<NewsItem | null>({
-    queryKey: ['article', slug],
-    queryFn: () => fetchArticleBySlug(slug),
-    enabled: !!slug,
+export function usePostById(id: number) {
+  return useQuery<PostApi | undefined>({
+    queryKey: ['posts-public', 'single', id],
+    queryFn: async () => {
+      const posts = await fetchPostsPublic();
+      return posts.find((p) => p.id === id);
+    },
+    enabled: id > 0,
     staleTime: 1000 * 60 * 5,
     retry: 1,
   });
 }
 
-export function useArticleByDocumentId(documentId: string) {
-  return useQuery<NewsItem | null>({
-    queryKey: ['article', 'doc', documentId],
-    queryFn: () => fetchArticleByDocumentId(documentId),
-    enabled: !!documentId,
-    staleTime: 1000 * 60 * 5,
+export function useSearchPosts(query: string) {
+  return useQuery<PostApi[]>({
+    queryKey: ['posts-search', query],
+    queryFn: () => searchPosts(query),
+    enabled: query.length >= 2,
+    staleTime: 1000 * 60 * 2,
     retry: 1,
   });
 }
+
+// Backward compat aliases
+export const useArticles = usePosts;

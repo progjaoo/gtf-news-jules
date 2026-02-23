@@ -1,37 +1,18 @@
 import React from "react";
 import { cn } from "@/lib/utils";
-import { EditorialType } from "@/contexts/EditorialContext";
 import { useNavigate } from "react-router-dom";
+import { PostApi } from "@/services/dotnetApi";
 
-export interface NewsItem {
-  id: number;
-  documentId: string;
-  titulo: string;
-  subtitulo?: string;
-  imagem: string;
-  editoria: EditorialType;
-  dataPublicacao: string;
-  slug?: string;
-  content?: string;
-}
+// Keep NewsItem as alias for backward compat
+export type NewsItem = PostApi;
 
 interface NewsCardProps {
-  news: NewsItem;
+  news: PostApi;
   variant?: "small" | "medium" | "large" | "horizontal";
   showImage?: boolean;
   showSubtitle?: boolean;
   className?: string;
 }
-
-// const categoryColors: Record<EditorialType, string> = {.  AQUI SAO AS CORES ALVO DOS EDITORIAIS
-//   noticias: "bg-editorial-noticias",
-//   nacional: "bg-editorial-nacional",
-//   esportes: "bg-editorial-esportes",
-//   negocios: "bg-editorial-negocios",
-//   inovacao: "bg-editorial-inovacao",
-//   cultura: "bg-editorial-cultura",
-//   servicos: "bg-editorial-servicos",
-// };
 
 export function NewsCard({
   news,
@@ -43,12 +24,20 @@ export function NewsCard({
   const navigate = useNavigate();
 
   const openArticle = () => {
-    navigate(`/noticia/${news.documentId}`);
+    navigate(`/noticia/${news.id}`);
   };
 
   const isSmall = variant === "small";
   const isLarge = variant === "large";
   const isHorizontal = variant === "horizontal";
+
+  // Indicador de cor do editorial
+  const editorialDot = (
+    <div
+      className="w-2 h-2 mt-1 rounded-sm flex-shrink-0"
+      style={{ backgroundColor: news.corTema }}
+    />
+  );
 
   if (isHorizontal) {
     return (
@@ -56,7 +45,7 @@ export function NewsCard({
         onClick={openArticle}
         className={cn("news-card flex gap-4 cursor-pointer p-3", className)}
       >
-        {showImage && (
+        {showImage && news.imagem && (
           <div className="w-28 h-20 flex-shrink-0 overflow-hidden rounded">
             <img
               src={news.imagem}
@@ -68,12 +57,7 @@ export function NewsCard({
 
         <div className="flex-1 min-w-0 py-1">
           <div className="flex items-start gap-2 mb-2">
-            <div
-              className={cn(
-                "w-2 h-2 mt-1 rounded-sm",
-                [news.editoria]
-              )}
-            />
+            {editorialDot}
             <h3 className="news-card-title text-base line-clamp-3">
               {news.titulo}
             </h3>
@@ -91,7 +75,7 @@ export function NewsCard({
 
   return (
     <article onClick={openArticle} className={cn("news-card cursor-pointer p-3", className)}>
-      {showImage && (
+      {showImage && news.imagem && (
         <div
           className={cn(
             "overflow-hidden rounded",
@@ -108,9 +92,7 @@ export function NewsCard({
 
       <div className={cn("pt-3", isLarge && "pt-4")}>
         <div className="flex items-start gap-2 mb-2">
-          <div
-            className={cn("w-2 h-2 mt-1 rounded-sm", [news.editoria])}
-          />
+          {editorialDot}
           <h3
             className={cn(
               "news-card-title",

@@ -7,29 +7,33 @@ import { Footer } from '@/components/portal/Footer';
 import { StickyHeader } from '@/components/portal/StickyHeader';
 import { NewsCard } from '@/components/portal/NewsCard';
 import { VerMaisButton } from '@/components/portal/VerMaisButton';
-import { useArticles } from '@/hooks/useArticles';
+import { usePosts } from '@/hooks/useArticles';
 
 function PortalContent() {
-  const { data: articles, isLoading } = useArticles();
+  const { data: posts, isLoading } = usePosts();
   
-  const allNews = articles || [];
+  const allNews = posts || [];
   
   const mainNews = allNews[0];
   const sideNews = allNews.slice(1, 10);
   const gridNews = allNews.slice(2, 8);
 
+  // Filtra por editorial usando o campo string da API
+  const negociosNews = allNews.filter(n => n.editorial === 'Negócios' || n.editorial === 'Negocios').slice(0, 4);
+  const nacionalNews = allNews.filter(n => n.editorial === 'Nacional').slice(0, 3);
+  const culturaNews = allNews.filter(n => n.editorial === 'Cultura').slice(0, 3);
+  const esportesNews = allNews.filter(n => n.editorial === 'Esportes').slice(0, 3);
+
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
       <StickyHeader />
-
       <AdBanner />
 
       {/* Hero Section */}
       <HeroSection mainNews={mainNews} sideNews={sideNews} />
 
       {/* Main News Grid */}
-      <section className="container pb-100" margin-top="50px">
+      <section className="container pb-10">
         <NewsGrid news={gridNews} columns={3} />
       </section>
 
@@ -39,67 +43,47 @@ function PortalContent() {
       </section>
 
       {/* Negócios Section */}
-      <EditorialSection 
-        title="Negócios" 
-        editorial="negocios" 
-        news={allNews.filter(n => n.editoria === 'negocios').slice(0, 4)} 
-      />
-      <VerMaisButton size="full"/>
+      {negociosNews.length > 0 && (
+        <>
+          <EditorialSection title="Negócios" editorial="negocios" news={negociosNews} />
+          <VerMaisButton size="full" />
+        </>
+      )}
 
       {/* Theme Sections */}
       <section className="container py-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
-            <SectionHeader title="Tema Um" editorial="nacional" />
-                    <div className="space-y-4">
-                      {sideNews.slice(3, 6).map((news) => (
-                        <NewsCard 
-                          key={news.id} 
-                          news={news} 
-                          variant="horizontal"
-                          showSubtitle={false}
-                        />
-                      ))}
-                    </div>
-                    <VerMaisButton size="medium" />
-
-
+            <SectionHeader title="Nacional" editorial="nacional" />
+            <div className="space-y-4">
+              {nacionalNews.map((news) => (
+                <NewsCard key={news.id} news={news} variant="horizontal" showSubtitle={false} />
+              ))}
+            </div>
+            <VerMaisButton size="medium" />
           </div>
           <div>
-            <SectionHeader title="Tema dois" editorial="cultura" />
-                    <div className="space-y-4">
-                      {sideNews.slice(1, 4).map((news) => (
-                        <NewsCard 
-                          key={news.id} 
-                          news={news} 
-                          variant="horizontal"
-                          showSubtitle={false}
-                        />
-                      ))}
-                    </div>
-                    <VerMaisButton size="medium"/>
+            <SectionHeader title="Cultura" editorial="cultura" />
+            <div className="space-y-4">
+              {culturaNews.map((news) => (
+                <NewsCard key={news.id} news={news} variant="horizontal" showSubtitle={false} />
+              ))}
+            </div>
+            <VerMaisButton size="medium" />
           </div>
           <div>
-            <SectionHeader title="Tema três" editorial="esportes" />
-                    <div className="space-y-4">
-                      {sideNews.slice(2, 5).map((news) => (
-                        <NewsCard 
-                          key={news.id} 
-                          news={news} 
-                          variant="horizontal"
-                          showSubtitle={false}
-                        />
-                      ))}
-                    </div>
-                  <VerMaisButton size="medium"/>
+            <SectionHeader title="Esportes" editorial="esportes" />
+            <div className="space-y-4">
+              {esportesNews.map((news) => (
+                <NewsCard key={news.id} news={news} variant="horizontal" showSubtitle={false} />
+              ))}
+            </div>
+            <VerMaisButton size="medium" />
           </div>
         </div>
       </section>
 
-      {/* Bottom Ad Banner */}
       <AdBanner />
-
-      {/* Footer */}
       <Footer />
     </div>
   );
