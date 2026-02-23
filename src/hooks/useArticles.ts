@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { fetchPostsPublic, searchPosts, PostApi } from '@/services/dotnetApi';
+import { fetchPostsPublic, fetchPostsByEditorial, searchPosts, PostApi } from '@/services/dotnetApi';
 
 export function usePosts() {
   return useQuery<PostApi[]>({
@@ -29,6 +29,16 @@ export function useSearchPosts(query: string) {
     queryFn: () => searchPosts(query),
     enabled: query.length >= 2,
     staleTime: 1000 * 60 * 2,
+    retry: 1,
+  });
+}
+
+export function usePostsByEditorial(editorialId: number) {
+  return useQuery<PostApi[]>({
+    queryKey: ['posts-editorial', editorialId],
+    queryFn: () => fetchPostsByEditorial(editorialId),
+    enabled: editorialId > 0,
+    staleTime: 1000 * 60 * 5,
     retry: 1,
   });
 }

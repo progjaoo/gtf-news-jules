@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import ArtigoPage from "./pages/ArtigoPage";
+import EditorialPage from "./pages/EditorialPage";
 import { EditorialProvider } from "@/contexts/EditorialContext";
 import { StationProvider } from "@/contexts/StationContext";
 import { StationRoute } from "./contexts/StationRoute";
@@ -46,6 +47,7 @@ const App = () => (
                   </StationRoute>
                 }
               />
+              <Route path="/editorial/:editorialId" element={<EditorialPage />} />
               <Route path="/noticia/:id" element={<ArtigoPage />} />
               <Route path="*" element={<NotFound />} />
             </Routes>

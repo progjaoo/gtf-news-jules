@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useEditorial, EditorialType } from '@/contexts/EditorialContext';
 import { cn } from '@/lib/utils';
 
@@ -24,15 +25,21 @@ const categoryTextColors: Record<EditorialType, string> = {
 
 export function CategoryNav() {
   const { currentEditorial, setEditorial, editorials } = useEditorial();
+  const navigate = useNavigate();
+
+  const handleClick = (editorial: typeof editorials[0], index: number) => {
+    setEditorial(editorial.id);
+    navigate(`/editorial/${index + 1}`);
+  };
 
   return (
     <nav className="bg-card border-b border-border">
       <div className="container">
         <div className="flex items-center justify-center gap-4 py-3 overflow-x-auto no-scrollbar">
-          {editorials.map((editorial) => (
-            <button border-b border-border
+          {editorials.map((editorial, index) => (
+            <button
               key={editorial.id}
-              onClick={() => setEditorial(editorial.id)}
+              onClick={() => handleClick(editorial, index)}
               className={cn(
                 'nav-category min-w-fit px-5 py-1 transition-all duration-200',
                 currentEditorial === editorial.id && 'opacity-100',
