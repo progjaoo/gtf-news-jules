@@ -8,6 +8,7 @@ import NotFound from "./pages/NotFound";
 import ArtigoPage from "./pages/ArtigoPage";
 import EditorialPage from "./pages/EditorialPage";
 import Radio88FMPage from "./pages/Radio88FMPage";
+import SearchPage from "./pages/SearchPage";
 import { EditorialProvider } from "@/contexts/EditorialContext";
 import { StationProvider } from "@/contexts/StationContext";
 import { StationRoute } from "./contexts/StationRoute";
@@ -57,6 +58,7 @@ const App = () => (
                 }
               />
               <Route path="/editorial/:editorialId" element={<EditorialPage />} />
+              <Route path="/busca" element={<SearchPage />} />
               <Route path="/noticia/:id" element={<ArtigoPage />} />
               <Route path="*" element={<NotFound />} />
             </Routes>

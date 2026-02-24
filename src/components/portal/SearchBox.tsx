@@ -38,6 +38,13 @@ export function SearchBox() {
     closeSearch();
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && query.trim().length >= 2) {
+      navigate(`/busca?q=${encodeURIComponent(query.trim())}`);
+      closeSearch();
+    }
+  };
+
   return (
     <div ref={wrapperRef} className="relative">
       {!open && (
@@ -64,6 +71,7 @@ export function SearchBox() {
               ref={inputRef}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
+              onKeyDown={handleKeyDown}
               placeholder="Buscar notícias..."
               className="bg-transparent outline-none w-48 text-sm text-foreground"
             />
@@ -73,30 +81,30 @@ export function SearchBox() {
             </button>
           </div>
 
-          {/* Resultados */}
+          {/* Resultados dropdown */}
           {query.length >= 2 && results && results.length > 0 && (
             <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-border rounded-md shadow-lg max-h-80 overflow-y-auto z-50 min-w-[320px]">
-              {results.map((post) => (
+              {results.slice(0, 5).map((post) => (
                 <button
                   key={post.id}
                   onClick={() => openArticle(post.id)}
                   className="w-full text-left px-4 py-3 hover:bg-muted transition-colors border-b border-border last:border-0"
                 >
                   <div className="flex items-center gap-2 mb-1">
-                    <div
-                      className="w-2 h-2 rounded-sm flex-shrink-0"
-                      style={{ backgroundColor: post.corTema }}
-                    />
-                    <span className="text-xs font-semibold uppercase" style={{ color: post.corTema }}>
-                      {post.editorial}
-                    </span>
+                    <div className="w-2 h-2 rounded-sm flex-shrink-0" style={{ backgroundColor: post.corTema }} />
+                    <span className="text-xs font-semibold uppercase" style={{ color: post.corTema }}>{post.editorial}</span>
                   </div>
                   <p className="text-sm font-semibold text-foreground line-clamp-2">{post.titulo}</p>
-                  {post.subtitulo && (
-                    <p className="text-xs text-muted-foreground mt-1 line-clamp-1">{post.subtitulo}</p>
-                  )}
                 </button>
               ))}
+              {/* Link para ver todos os resultados */}
+              <button
+                onClick={() => { navigate(`/busca?q=${encodeURIComponent(query.trim())}`); closeSearch(); }}
+                className="w-full text-center px-4 py-3 text-sm font-semibold hover:bg-muted transition-colors"
+                style={{ color: 'var(--station-color, #038CE4)' }}
+              >
+                Ver todos os resultados →
+              </button>
             </div>
           )}
 
