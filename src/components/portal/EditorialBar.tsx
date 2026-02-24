@@ -2,9 +2,10 @@ import React from 'react';
 import { MainDrawer } from './MainDrawer';
 import { SearchBox } from './SearchBox';
 import { useStation } from '@/contexts/StationContext';
+import { useEditorial } from '@/contexts/EditorialContext';
 import logo88 from '@/assets/logoazul.svg';
 import logomaravilha from '@/assets/logomaravilha.svg';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 // Mapeamento de logos por station
 const stationLogos: Record<string, string> = {
@@ -16,13 +17,22 @@ const stationLogos: Record<string, string> = {
 
 export function EditorialBar() {
   const { currentStation } = useStation();
+  const { getEditorialInfo } = useEditorial();
+  const location = useLocation();
   const logoSrc = stationLogos[currentStation.id];
 
   const stationHomePath = `/${currentStation.id}`;
 
+  // Use editorial color when on an editorial page, otherwise station color
+  const isEditorialPage = location.pathname.startsWith('/editorial/');
+  const editorialInfo = getEditorialInfo();
+  const barColor = isEditorialPage && editorialInfo?.corPrimaria
+    ? editorialInfo.corPrimaria
+    : currentStation.color;
+
   return (
     <div className="editorial-bar shadow-sm"
-         style={{ backgroundColor: currentStation.color }}>
+         style={{ backgroundColor: barColor }}>
       
       <div className="container flex items-center justify-between h-[70px] w-full relative">
 
