@@ -3,11 +3,15 @@ import { Footer } from '@/components/portal/Footer';
 import { AdBanner } from '@/components/portal/AdBanner';
 import { SectionHeader } from '@/components/portal/SectionHeader';
 import { NewsCard } from '@/components/portal/NewsCard';
-import { VerMaisButton } from '@/components/portal/VerMaisButton';
-import { usePosts } from '@/hooks/useArticles';
+import { usePosts, usePostsByEditorial } from '@/hooks/useArticles';
 import { useNavigate } from 'react-router-dom';
 import { PostApi } from '@/services/dotnetApi';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useStation } from '@/contexts/StationContext';
+
+function cn(...classes: (string | boolean | undefined)[]) {
+  return classes.filter(Boolean).join(' ');
+}
 
 function HeroCard({ post, size = 'normal' }: { post: PostApi; size?: 'large' | 'normal' }) {
   const navigate = useNavigate();
@@ -27,7 +31,6 @@ function HeroCard({ post, size = 'normal' }: { post: PostApi; size?: 'large' | '
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />
       </div>
-      {/* Overlay com editorial badge e título */}
       <div className="absolute bottom-0 left-0 right-0 p-4"
            style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 70%, transparent 100%)' }}>
         {post.editorial && (
@@ -44,21 +47,32 @@ function HeroCard({ post, size = 'normal' }: { post: PostApi; size?: 'large' | '
   );
 }
 
-function cn(...classes: (string | boolean | undefined)[]) {
-  return classes.filter(Boolean).join(' ');
-}
-
 function Radio88FMContent() {
-  const { data: posts, isLoading } = usePosts();
-  const allNews = posts || [];
+  const navigate = useNavigate();
+  const { currentStation } = useStation();
 
-  // Hero: 6 posts em grid 3x2
-  const heroNews = allNews.slice(0, 6);
-  // Seção editorial por categoria
-  const negociosNews = allNews.filter(n => n.editorial === 'Negócios' || n.editorial === 'Negocios').slice(0, 4);
-  const culturaNews = allNews.filter(n => n.editorial === 'Cultura').slice(0, 1);
-  const noticiasNews = allNews.filter(n => n.editorial === 'Notícias' || n.editorial === 'Noticias').slice(0, 1);
-  const esportesNews = allNews.filter(n => n.editorial === 'Esportes').slice(0, 1);
+  // Buscar posts dos editoriais da 88FM: Receitas(9), Música(10), Enquete(11), Debates(12)
+  const { data: receitasPosts } = usePostsByEditorial(9);
+  const { data: musicaPosts } = usePostsByEditorial(10);
+  const { data: enquetePosts } = usePostsByEditorial(11);
+  const { data: debatesPosts } = usePostsByEditorial(12);
+
+  // Combinar todos os posts da 88FM para o hero
+  const allRadioPosts = [
+    ...(receitasPosts || []),
+    ...(musicaPosts || []),
+    ...(enquetePosts || []),
+    ...(debatesPosts || []),
+  ];
+
+  const heroNews = allRadioPosts.slice(0, 6);
+
+  // Posts gatilho do Fato Popular para a seção inferior
+  const { data: allPosts, isLoading } = usePosts();
+  const fatoPosts = (allPosts || []);
+  const culturaNews = fatoPosts.filter(n => n.editorial === 'Cultura').slice(0, 1);
+  const noticiasNews = fatoPosts.filter(n => n.editorial === 'Notícias' || n.editorial === 'Noticias').slice(0, 1);
+  const esportesNews = fatoPosts.filter(n => n.editorial === 'Esportes').slice(0, 1);
 
   if (isLoading) {
     return (
@@ -79,35 +93,26 @@ function Radio88FMContent() {
     <div className="min-h-screen bg-background">
       <StickyHeader />
 
-      {/* Hero Grid 3x2 com overlay */}
+      {/* Hero Grid 3x2 com posts da Rádio 88 FM */}
       <section className="container py-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {heroNews[0] && (
-            <HeroCard post={heroNews[0]} size="large" />
-          )}
-          {heroNews.slice(1, 3).map((post) => (
-            <HeroCard key={post.id} post={post} />
-          ))}
-          {heroNews.slice(3, 6).map((post) => (
-            <HeroCard key={post.id} post={post} />
-          ))}
-        </div>
-      </section>
-
-      {/* Negócios Section */}
-      {negociosNews.length > 0 && (
-        <section className="container py-8">
-          <SectionHeader title="Negócios" editorial="negocios" />
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-            {negociosNews.map((news) => (
-              <NewsCard key={news.id} news={news} showSubtitle={false} />
+        {heroNews.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {heroNews[0] && <HeroCard post={heroNews[0]} size="large" />}
+            {heroNews.slice(1, 3).map((post) => (
+              <HeroCard key={post.id} post={post} />
+            ))}
+            {heroNews.slice(3, 6).map((post) => (
+              <HeroCard key={post.id} post={post} />
             ))}
           </div>
-          <VerMaisButton size="full" />
-        </section>
-      )}
+        ) : (
+          <div className="text-center py-16 text-muted-foreground">
+            <p className="text-lg">Nenhuma notícia da Rádio 88 FM disponível no momento.</p>
+          </div>
+        )}
+      </section>
 
-      {/* 3 colunas: Cultura, Notícias, Esportes */}
+      {/* Seção Gatilho: Fato Popular */}
       <section className="container py-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
@@ -117,7 +122,6 @@ function Radio88FMContent() {
                 <NewsCard key={news.id} news={news} variant="horizontal" showSubtitle={false} />
               ))}
             </div>
-            <VerMaisButton size="medium" />
           </div>
           <div>
             <SectionHeader title="Notícias" editorial="noticias" />
@@ -126,7 +130,6 @@ function Radio88FMContent() {
                 <NewsCard key={news.id} news={news} variant="horizontal" showSubtitle={false} />
               ))}
             </div>
-            <VerMaisButton size="medium" />
           </div>
           <div>
             <SectionHeader title="Esportes" editorial="esportes" />
@@ -135,8 +138,18 @@ function Radio88FMContent() {
                 <NewsCard key={news.id} news={news} variant="horizontal" showSubtitle={false} />
               ))}
             </div>
-            <VerMaisButton size="medium" />
           </div>
+        </div>
+
+        {/* Botão Ver Mais → Fato Popular */}
+        <div className="flex justify-center mt-8">
+          <button
+            onClick={() => navigate('/fatopopular')}
+            className="px-8 py-3 rounded-md font-bold text-sm uppercase tracking-wide text-primary-foreground transition-all hover:opacity-90"
+            style={{ backgroundColor: currentStation.color }}
+          >
+            Ver mais no Fato Popular
+          </button>
         </div>
       </section>
 

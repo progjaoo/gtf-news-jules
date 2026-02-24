@@ -32,9 +32,17 @@ export function EditorialBar() {
         </div>
 
         <div className="absolute left-1/2 -translate-x-1/2">
-        <Link to={stationHomePath} className="flex items-center">
-          <img src={logoSrc} alt={currentStation.name} className="h-10 w-auto" />
-        </Link>
+          <Link to={stationHomePath} className="flex items-center gap-3">
+            <img src={logoSrc} alt={currentStation.name} className="h-10 w-auto" />
+            {currentStation.id === 'fatopopular' && (
+              <>
+                <span className="text-primary-foreground text-lg font-light">|</span>
+                <span className="text-primary-foreground font-bold text-sm tracking-wide uppercase">
+                  Fato Popular
+                </span>
+              </>
+            )}
+          </Link>
         </div>
 
         <div className="w-[90px] flex justify-end">
