@@ -39,12 +39,11 @@ export default function EditorialPage() {
       <section className="container py-10">
         {/* Nome do editorial no topo */}
         <div className="mb-6 flex items-center gap-3">
-          <div className="w-4 h-4 rounded-sm" style={{ backgroundColor: editorialColor }} />
-          <h1 className="text-2xl md:text-3xl font-bold uppercase" style={{ color: editorialColor }}>
+          <div className="w-1 h-8 rounded-sm" style={{ backgroundColor: editorialColor }} />
+          <h1 className="text-2xl md:text-3xl font-bold uppercase">
             {editorialLabel}
           </h1>
         </div>
-        <SectionHeader title={editorialLabel} editorial={editorialType} />
 
         {isLoading && (
           <div className="space-y-4 mt-6">
