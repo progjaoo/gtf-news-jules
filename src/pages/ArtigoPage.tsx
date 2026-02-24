@@ -68,7 +68,7 @@ export default function ArtigoPage() {
                   })}
                 </span>
               )}
-              {noticia.usuarioCriacao && <span>Por {noticia.usuarioCriacao}</span>}
+              {noticia.usuarioCriacao && <span>Por: {noticia.usuarioCriacao}</span>}
               {noticia.cidade && <span>{noticia.cidade}</span>}
             </div>
 
