@@ -4,12 +4,27 @@ import { Footer } from "@/components/portal/Footer";
 import { NewsCard } from "@/components/portal/NewsCard";
 import { usePostById, usePosts } from "@/hooks/useArticles";
 import { MessageCircle, Share2 } from "lucide-react";
+import { useEditorial } from "@/contexts/EditorialContext";
 
 export default function ArtigoPage() {
   const { id } = useParams();
   const postId = Number(id) || 0;
   const { data: noticia, isLoading } = usePostById(postId);
   const { data: allPosts } = usePosts();
+  const { allEditorials } = useEditorial();
+
+  // Resolve the correct editorial color by matching the editorial name
+  const resolveEditorialColor = (editorial?: string, fallbackColor?: string) => {
+    if (editorial) {
+      const normalizedName = editorial.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      const match = allEditorials.find(e => {
+        const eName = e.label.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        return eName === normalizedName || eName.startsWith(normalizedName) || normalizedName.startsWith(eName);
+      });
+      if (match) return match.corPrimaria;
+    }
+    return fallbackColor || '#E83C25';
+  };
 
   const relatedNews = (allPosts || []).filter((n) => n.id !== postId).slice(0, 4);
 
@@ -44,8 +59,8 @@ export default function ArtigoPage() {
           <main className="bg-white rounded-xl shadow-sm p-8">
             {/* EDITORIA */}
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: noticia.corTema || '#E83C25' }} />
-              <span className="font-semibold uppercase text-sm" style={{ color: noticia.corTema || '#E83C25' }}>
+              <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: resolveEditorialColor(noticia.editorial, noticia.corTema) }} />
+              <span className="font-semibold uppercase text-sm" style={{ color: resolveEditorialColor(noticia.editorial, noticia.corTema) }}>
                 {noticia.editorial || 'NOTÍCIAS'}
               </span>
             </div>
