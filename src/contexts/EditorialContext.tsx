@@ -58,11 +58,11 @@ const fatoPopularEditorials: EditorialInfo[] = [
 
 // Editoriais da Rádio 88 FM
 const radio88fmEditorials: EditorialInfo[] = [
-  { id: 'enquete', apiId: 11, label: 'ENQUETES', color: 'bg-editorial-cultura', corPrimaria: '#038CE4', corSecundaria: '#038CE4', corFonte: '#FFFFFF' },
-  { id: 'debates', apiId: 12, label: 'DEBATES', color: 'bg-editorial-cultura', corPrimaria: '#038CE4', corSecundaria: '#038CE4', corFonte: '#FFFFFF' },
+  { id: 'enquete', apiId: 11, label: 'ENQUETES', color: 'bg-editorial-noticias', corPrimaria: '#E83C25', corSecundaria: '#E83C25', corFonte: '#FFFFFF' },
+  { id: 'debates', apiId: 12, label: 'DEBATES', color: 'bg-editorial-negocios', corPrimaria: '#FF8000', corSecundaria: '#FF8000', corFonte: '#FFFFFF' },
   { id: 'musica', apiId: 10, label: 'MÚSICA', color: 'bg-editorial-cultura', corPrimaria: '#038CE4', corSecundaria: '#038CE4', corFonte: '#FFFFFF' },
-  { id: 'fatopopular', apiId: 0, label: 'FATO POPULAR', color: 'bg-editorial-noticias', corPrimaria: '#132D52', corSecundaria: '#132D52', corFonte: '#FFFFFF', isLink: true, linkTo: '/fatopopular' },
-  { id: 'receitas', apiId: 9, label: 'RECEITAS', color: 'bg-editorial-negocios', corPrimaria: '#038CE4', corSecundaria: '#038CE4', corFonte: '#FFFFFF' },
+  { id: 'fatopopular', apiId: 0, label: 'FATO POPULAR', color: 'bg-editorial-nacional', corPrimaria: '#132D52', corSecundaria: '#132D52', corFonte: '#FFFFFF', isLink: true, linkTo: '/fatopopular' },
+  { id: 'receitas', apiId: 9, label: 'RECEITAS', color: 'bg-editorial-esportes', corPrimaria: '#06AA48', corSecundaria: '#06AA48', corFonte: '#FFFFFF' },
 ];
 
 // Mapeamento de quais editoriais cada station usa
