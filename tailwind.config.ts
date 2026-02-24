@@ -76,6 +76,7 @@ export default {
           "88fm": "hsl(var(--station-88fm))",
           maravilha: "hsl(var(--station-maravilha))",
           gtfnews: "hsl(var(--station-gtfnews))",
+          fatopopular: "hsl(var(--station-fatopopular))",
         },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",

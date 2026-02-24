@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import ArtigoPage from "./pages/ArtigoPage";
 import EditorialPage from "./pages/EditorialPage";
+import Radio88FMPage from "./pages/Radio88FMPage";
 import { EditorialProvider } from "@/contexts/EditorialContext";
 import { StationProvider } from "@/contexts/StationContext";
 import { StationRoute } from "./contexts/StationRoute";
@@ -27,6 +28,14 @@ const App = () => (
                 path="/radio88fm"
                 element={
                   <StationRoute stationId="radio88fm">
+                    <Radio88FMPage />
+                  </StationRoute>
+                }
+              />
+              <Route
+                path="/fatopopular"
+                element={
+                  <StationRoute stationId="fatopopular">
                     <Index />
                   </StationRoute>
                 }

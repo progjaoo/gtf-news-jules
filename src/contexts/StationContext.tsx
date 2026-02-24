@@ -3,13 +3,14 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchEmissora, EmissoraApi } from "@/services/dotnetApi";
 
-export type StationType = "radio88fm" | "radio89maravilha" | "gtfnews";
+export type StationType = "radio88fm" | "radio89maravilha" | "gtfnews" | "fatopopular";
 
 // Mapeamento station → ID na API .NET
 const stationApiIds: Record<StationType, number> = {
   radio88fm: 1,
   radio89maravilha: 4,
-  gtfnews: 4, // mesmo ID conforme informado
+  gtfnews: 4,
+  fatopopular: 5,
 };
 
 // Fallback local caso API esteja offline
@@ -17,6 +18,7 @@ const fallbackStations = [
   { id: "radio88fm", name: "88 FM", color: "#038CE4", homePath: "/radio88fm" },
   { id: "radio89maravilha", name: "89 MARAVILHA", color: "#FF8000", homePath: "/radio89maravilha" },
   { id: "gtfnews", name: "GTF NEWS", color: "#000000", homePath: "/gtfnews" },
+  { id: "fatopopular", name: "FATO POPULAR", color: "#132D52", homePath: "/fatopopular" },
 ];
 
 export const stations = fallbackStations;

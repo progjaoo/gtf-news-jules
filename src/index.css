@@ -39,6 +39,7 @@
     --station-88fm: 203 98% 45%;          /* #038CE4 */
     --station-maravilha: 30 100% 50%;     /* #FF8000 */
     --station-gtfnews: 0 0% 0%;           /* #000000 */
+    --station-fatopopular: 215 63% 20%;   /* #132D52 */
 
     /* Accent Colors */
     --accent-orange: 30 100% 50%;
@@ -203,6 +204,16 @@
     --primary-dark: 0 0% 10%;
     --primary-light: 0 0% 30%;
     --ring: 0 0% 20%;
+  }
+
+  .station-fatopopular {
+    --station-primary: 215 63% 20%;
+    --station-primary-foreground: 0 0% 100%;
+
+    --primary: 215 63% 20%;
+    --primary-dark: 215 63% 15%;
+    --primary-light: 215 63% 30%;
+    --ring: 215 63% 20%;
   }
 }
 

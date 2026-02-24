@@ -7,7 +7,7 @@ import { useStation } from '@/contexts/StationContext';
 
 export function TopHeader() {
   const { currentStation } = useStation();
-
+  const stationName = currentStation.id === 'fatopopular' ? 'FATO POPULAR' : currentStation.name;
   return (
     <header className="bg-card border-b border-border">
       <div className="container flex items-center justify-between h-12">

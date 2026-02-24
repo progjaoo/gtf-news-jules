@@ -6,11 +6,12 @@ import logo88 from '@/assets/logoazul.svg';
 import logomaravilha from '@/assets/logomaravilha.svg';
 import { Link } from 'react-router-dom';
 
-// Mapeamento de logos por station - será alimentado via API
+// Mapeamento de logos por station
 const stationLogos: Record<string, string> = {
   'radio88fm': logo88,
   'radio89maravilha': logomaravilha,
   'gtfnews': logo88, 
+  'fatopopular': logo88,
 };
 
 export function EditorialBar() {
