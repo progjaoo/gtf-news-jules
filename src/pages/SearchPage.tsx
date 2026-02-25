@@ -1,11 +1,20 @@
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { StickyHeader } from '@/components/portal/StickyHeader';
 import { Footer } from '@/components/portal/Footer';
 import { useSearchPosts } from '@/hooks/useArticles';
 import { useStation } from '@/contexts/StationContext';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Search } from 'lucide-react';
 import { useState } from 'react';
+import { StationSelector } from '@/components/portal/StationSelector';
+import logo88 from '@/assets/logoazul.svg';
+import logomaravilha from '@/assets/logomaravilha.svg';
+
+const stationLogos: Record<string, string> = {
+  'radio88fm': logo88,
+  'radio89maravilha': logomaravilha,
+  'gtfnews': logo88,
+  'fatopopular': logo88,
+};
 
 function SearchResultCard({ post, stationColor }: { post: any; stationColor: string }) {
   const navigate = useNavigate();
@@ -20,7 +29,6 @@ function SearchResultCard({ post, stationColor }: { post: any; stationColor: str
       className="flex gap-5 py-5 border-b border-border cursor-pointer group"
       onClick={() => navigate(`/noticia/${post.id}`)}
     >
-      {/* Imagem */}
       <div className="flex-shrink-0 w-[220px] h-[140px] rounded-lg overflow-hidden bg-muted">
         <img
           src={post.imagem || '/placeholder.svg'}
@@ -28,8 +36,6 @@ function SearchResultCard({ post, stationColor }: { post: any; stationColor: str
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />
       </div>
-
-      {/* Conteúdo */}
       <div className="flex flex-col justify-center flex-1 min-w-0">
         <span
           className="text-xs font-bold uppercase tracking-wide mb-1"
@@ -60,6 +66,7 @@ export default function SearchPage() {
   const [inputValue, setInputValue] = useState(q);
   const { data: results, isLoading } = useSearchPosts(q);
   const { currentStation } = useStation();
+  const logoSrc = stationLogos[currentStation.id];
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,23 +77,43 @@ export default function SearchPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <StickyHeader />
+      {/* PASSO 4: Search page has only TopHeader-style bar + search */}
+      <header className="bg-card border-b border-border">
+        <div className="container flex items-center justify-between h-12">
+          <div className="flex items-center gap-3">
+            <StationSelector />
+            <span className="text-sm text-muted-foreground mx-1 hidden sm:inline">|</span>
+            <span
+              className="text-sm font-semibold hidden sm:inline"
+              style={{ color: currentStation.color }}
+            >
+              BRASIL
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <button className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors">
+              <span className="hidden sm:inline">Rio de Janeiro</span>
+            </button>
+          </div>
+        </div>
+      </header>
 
-      {/* Barra de busca no topo */}
+      {/* Barra de busca com logo da emissora */}
       <div className="w-full" style={{ backgroundColor: currentStation.color }}>
-        <div className="container py-4">
-          <form onSubmit={handleSubmit} className="flex items-center gap-3">
-            <Search size={20} className="text-primary-foreground flex-shrink-0" />
+        <div className="container py-3">
+          <form onSubmit={handleSubmit} className="flex items-center gap-4">
+            {/* Logo da emissora no lado esquerdo */}
+            <img src={logoSrc} alt={currentStation.name} className="h-8 w-auto flex-shrink-0" />
             <input
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               placeholder="Buscar notícias..."
-              className="flex-1 bg-primary-foreground/20 text-primary-foreground placeholder:text-primary-foreground/60 rounded-md px-4 py-2 text-sm outline-none border border-primary-foreground/30 focus:border-primary-foreground/60 transition-colors"
+              className="flex-1 bg-primary-foreground text-foreground placeholder:text-muted-foreground rounded-md px-4 py-2 text-sm outline-none"
               autoFocus
             />
             <button
               type="submit"
-              className="px-4 py-2 bg-primary-foreground/20 text-primary-foreground text-sm font-semibold rounded-md hover:bg-primary-foreground/30 transition-colors border border-primary-foreground/30"
+              className="px-5 py-2 bg-primary-foreground/20 text-primary-foreground text-sm font-semibold rounded-md hover:bg-primary-foreground/30 transition-colors border border-primary-foreground/30"
             >
               Buscar
             </button>

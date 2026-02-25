@@ -1,3 +1,4 @@
+import React from "react";
 import { useParams } from "react-router-dom";
 import { StickyHeader } from "@/components/portal/StickyHeader";
 import { Footer } from "@/components/portal/Footer";
@@ -11,7 +12,21 @@ export default function ArtigoPage() {
   const postId = Number(id) || 0;
   const { data: noticia, isLoading } = usePostById(postId);
   const { data: allPosts } = usePosts();
-  const { allEditorials } = useEditorial();
+  const { allEditorials, setEditorial, editorials } = useEditorial();
+
+  // PASSO 1: When article loads, set editorial color based on article's editorial
+  React.useEffect(() => {
+    if (noticia?.editorial) {
+      const normalizedName = noticia.editorial.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      const match = editorials.find(e => {
+        const eName = e.label.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        return eName === normalizedName || eName.startsWith(normalizedName) || normalizedName.startsWith(eName);
+      });
+      if (match) {
+        setEditorial(match.id);
+      }
+    }
+  }, [noticia?.editorial, editorials, setEditorial]);
 
   // Resolve the correct editorial color by matching the editorial name
   const resolveEditorialColor = (editorial?: string, fallbackColor?: string) => {

@@ -25,8 +25,9 @@ export function EditorialBar() {
 
   // Use editorial color when on an editorial page, otherwise station color
   const isEditorialPage = location.pathname.startsWith('/editorial/');
+  const isArticlePage = location.pathname.startsWith('/noticia/');
   const editorialInfo = getEditorialInfo();
-  const barColor = isEditorialPage && editorialInfo?.corPrimaria
+  const barColor = (isEditorialPage || isArticlePage) && editorialInfo?.corPrimaria
     ? editorialInfo.corPrimaria
     : currentStation.color;
 
