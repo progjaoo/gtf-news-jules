@@ -1,7 +1,7 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
-import { PostApi } from "@/services/dotnetApi";
+import { PostApi, resolveImageUrl } from "@/services/dotnetApi";
 
 // Keep NewsItem as alias for backward compat
 export type NewsItem = PostApi;
@@ -45,10 +45,10 @@ export function NewsCard({
         onClick={openArticle}
         className={cn("news-card flex gap-4 cursor-pointer p-3", className)}
       >
-        {showImage && news.imagem && (
+      {showImage && (
           <div className="w-28 h-20 flex-shrink-0 overflow-hidden rounded">
             <img
-              src={news.imagem}
+              src={resolveImageUrl(news.imagem)}
               alt={news.titulo}
               className="w-full h-full object-cover"
             />
@@ -75,7 +75,7 @@ export function NewsCard({
 
   return (
     <article onClick={openArticle} className={cn("news-card cursor-pointer p-3", className)}>
-      {showImage && news.imagem && (
+      {showImage && (
         <div
           className={cn(
             "overflow-hidden rounded",
@@ -83,7 +83,7 @@ export function NewsCard({
           )}
         >
           <img
-            src={news.imagem}
+            src={resolveImageUrl(news.imagem)}
             alt={news.titulo}
             className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
           />

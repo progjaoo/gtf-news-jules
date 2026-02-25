@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { PostApi } from '@/services/dotnetApi';
+import { PostApi, resolveImageUrl } from '@/services/dotnetApi';
 import { Button } from '@/components/ui/button';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -24,7 +24,7 @@ export function PostHorizontalCard({ post }: PostHorizontalCardProps) {
       {/* Imagem */}
       <div className="sm:w-72 w-full h-48 sm:h-auto sm:min-h-[200px] flex-shrink-0 overflow-hidden">
         <img
-          src={post.imagem || '/placeholder.svg'}
+          src={resolveImageUrl(post.imagem)}
           alt={post.titulo}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />
