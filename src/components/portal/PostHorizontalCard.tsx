@@ -36,15 +36,16 @@ export function PostHorizontalCard({ post }: PostHorizontalCardProps) {
           <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
             {formattedDate}
           </span>
-          <h3 className="text-lg font-bold text-foreground leading-tight group-hover:text-primary transition-colors duration-200 line-clamp-2">
+          <h3 className="text-[1.450rem] font-bold text-foreground leading-tight group-hover:text-primary transition-colors duration-200 line-clamp-2">
             {post.titulo}
           </h3>
-          <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
+          <p className="text-[1.0rem] text-muted-foreground leading-relaxed line-clamp-3">
             {post.subtitulo || post.conteudo}
           </p>
         </div>
 
-        <div className="flex justify-end">
+        {/* <div className="flex justify-end">
+          
           <Button
             variant="default"
             size="sm"
@@ -55,7 +56,7 @@ export function PostHorizontalCard({ post }: PostHorizontalCardProps) {
           >
             Ler Mais
           </Button>
-        </div>
+        </div> */}
       </div>
     </article>
   );

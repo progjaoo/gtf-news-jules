@@ -142,7 +142,7 @@ function Radio88FMContent() {
         </div>
 
         {/* Botões Ver Mais por editorial */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-4">
+     {/*    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-4">
           <div className="flex justify-center">
             <button
               onClick={() => navigate('/editorial/6')}
@@ -170,13 +170,13 @@ function Radio88FMContent() {
               Ver mais Esportes
             </button>
           </div>
-        </div>
+        </div> */}
 
         {/* Botão geral Fato Popular */}
         <div className="flex justify-center mt-6">
           <button
             onClick={() => navigate('/fatopopular')}
-            className="px-8 py-3 rounded-md font-bold text-sm uppercase tracking-wide text-white transition-all hover:opacity-90"
+            className="px-80 py-2 rounded-md font-bold text-sm uppercase tracking-wide text-white transition-all hover:opacity-90"
             style={{ backgroundColor: '#132D52' }}
           >
             Ver mais no Fato Popular

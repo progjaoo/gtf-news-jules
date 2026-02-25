@@ -32,7 +32,7 @@ export default function ArtigoPage() {
     return (
       <div className="min-h-screen bg-background">
         <StickyHeader />
-        <div className="p-20 text-center text-2xl text-muted-foreground">Carregando...</div>
+          <div className="p-20 text-center text-2xl text-muted-foreground">Carregando...</div>
         <Footer />
       </div>
     );
