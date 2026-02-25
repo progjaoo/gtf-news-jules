@@ -5,7 +5,7 @@ import { SectionHeader } from '@/components/portal/SectionHeader';
 import { NewsCard } from '@/components/portal/NewsCard';
 import { usePosts, usePostsByEditorial } from '@/hooks/useArticles';
 import { useNavigate } from 'react-router-dom';
-import { PostApi } from '@/services/dotnetApi';
+import { PostApi, resolveImageUrl } from '@/services/dotnetApi';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useStation } from '@/contexts/StationContext';
 
@@ -26,7 +26,7 @@ function HeroCard({ post, size = 'normal' }: { post: PostApi; size?: 'large' | '
     >
       <div className={cn('w-full bg-muted', size === 'large' ? 'h-full min-h-[400px]' : 'h-[195px]')}>
         <img
-          src={post.imagem || '/placeholder.svg'}
+          src={resolveImageUrl(post.imagem)}
           alt={post.titulo}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />

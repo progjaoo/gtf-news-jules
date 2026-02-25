@@ -46,6 +46,17 @@ export interface EmissoraApi {
   ativa: boolean;
 }
 
+// ─── Image URL Helper ───
+
+export function resolveImageUrl(imagem?: string | null): string {
+  if (!imagem) return '/placeholder.svg';
+  // Already absolute URL
+  if (imagem.startsWith('http://') || imagem.startsWith('https://')) return imagem;
+  // Relative path → prepend base URL
+  const path = imagem.startsWith('/') ? imagem : `/${imagem}`;
+  return `${BASE_URL}${path}`;
+}
+
 // ─── Posts ───
 
 export async function fetchPostsPublic(): Promise<PostApi[]> {
