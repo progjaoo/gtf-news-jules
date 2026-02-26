@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { fetchAllTemasEditoriais, TemaEditorialApi } from '@/services/dotnetApi';
 import { useStation, StationType } from '@/contexts/StationContext';
@@ -99,6 +99,7 @@ interface EditorialContextType {
   allEditorials: EditorialInfo[];
   getEditorialColor: (type: EditorialType) => string;
   getEditorialByApiId: (apiId: number) => EditorialInfo | undefined;
+  resolveEditorialColor: (editorialName?: string, fallbackColor?: string) => string;
 }
 
 const EditorialContext = createContext<EditorialContextType | undefined>(undefined);
@@ -136,7 +137,23 @@ export function EditorialProvider({ children }: { children: ReactNode }) {
 
   const getEditorialInfo = () => editorials.find(e => e.id === currentEditorial);
 
-  const allEditorialsList = [...fatoPopularEditorials, ...radio88fmEditorials];
+  const allEditorialsList = useMemo(() => {
+    const base = [...fatoPopularEditorials, ...radio88fmEditorials];
+    if (!apiEditorials) return base;
+
+    return base.map(fallback => {
+      const apiMatch = apiEditorials.find(t => descToType[t.descricao] === fallback.id);
+      if (apiMatch) {
+        return {
+          ...fallback,
+          corPrimaria: apiMatch.corPrimaria,
+          corSecundaria: apiMatch.corSecundaria,
+          corFonte: apiMatch.corFonte,
+        };
+      }
+      return fallback;
+    });
+  }, [apiEditorials]);
 
   const getEditorialColor = (type: EditorialType) => {
     const info = allEditorialsList.find(e => e.id === type);
@@ -145,6 +162,18 @@ export function EditorialProvider({ children }: { children: ReactNode }) {
 
   const getEditorialByApiId = (apiId: number) => {
     return allEditorialsList.find(e => e.apiId === apiId);
+  };
+
+  const resolveEditorialColor = (editorialName?: string, fallbackColor?: string) => {
+    if (editorialName) {
+      const normalizedName = editorialName.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      const match = allEditorialsList.find(e => {
+        const eName = e.label.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        return eName === normalizedName || eName.startsWith(normalizedName) || normalizedName.startsWith(eName);
+      });
+      if (match) return match.corPrimaria;
+    }
+    return fallbackColor || '#038CE4';
   };
 
   return (
@@ -159,6 +188,7 @@ export function EditorialProvider({ children }: { children: ReactNode }) {
         allEditorials: allEditorialsList,
         getEditorialColor,
         getEditorialByApiId,
+        resolveEditorialColor,
       }}
     >
       <div className={getEditorialClass()}>
