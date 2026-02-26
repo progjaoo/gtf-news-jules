@@ -8,29 +8,18 @@ import { useNavigate } from 'react-router-dom';
 import { PostApi, resolveImageUrl } from '@/services/dotnetApi';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useStation } from '@/contexts/StationContext';
+import { useEditorial } from '@/contexts/EditorialContext';
 
 function cn(...classes: (string | boolean | undefined)[]) {
   return classes.filter(Boolean).join(' ');
 }
 
-const getEditorialColor = (editorial?: string, fallbackColor?: string) => {
-  if (fallbackColor) return fallbackColor;
-  
-  const colors: Record<string, string> = {
-    'Música': '#038CE4', 
-    'Enquete': '#E83C25',  
-    'Debates': '#FDB813',  
-    'Receitas': '#06AA48',
-  };
-
-  return editorial ? (colors[editorial] || '#038CE4') : '#038CE4';
-};
-
 function HeroCard({ post, size = 'normal' }: { post: PostApi; size?: 'large' | 'normal' }) {
   const navigate = useNavigate();
+  const { resolveEditorialColor } = useEditorial();
   
   // Usamos a função para definir a cor final
-  const bgColor = getEditorialColor(post.editorial, post.corTema);
+  const bgColor = resolveEditorialColor(post.editorial, post.corTema);
 
   return (
     <article
