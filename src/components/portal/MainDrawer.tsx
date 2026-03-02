@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { 
   Menu, ChevronDown, ChevronRight, 
   Newspaper, Settings, Home, Clock 
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { fetchEditoriais, fetchSubcategorias, fetchAllTemasEditoriais } from '@/services/dotnetApi';
 
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
@@ -14,94 +17,9 @@ interface MenuItem {
   id: string;
   label: string;
   icon?: React.ReactNode;
+  onClick?: () => void;
   children?: MenuItem[];       // Subníveis (editorias → sub-tópicos)
 }
-
-/* --------------------------------------------------------------
-   DADOS ESTÁTICOS INICIAIS (até termos a API)
-   Aqui ficarão editorias + subtópicos
-   Quando a API estiver pronta, basta substituir por fetch()
----------------------------------------------------------------- */
-const menuItems: MenuItem[] = [
-  
-  // Página inicial
-  { id: 'home', label: 'Início', icon: <Home size={18} /> },
-
-  // EDITORIA + subtópicos
-  { 
-    id: 'editorias',
-    label: 'Editorias',
-    icon: <Newspaper size={18} />,
-    children: [
-      {
-        id: 'nacional',
-        label: 'Nacional',
-        children: [
-          { id: 'politica-nacional', label: 'Política' },
-          { id: 'economia-nacional', label: 'Economia' },
-          { id: 'sociedade-nacional', label: 'Sociedade' },
-          { id: 'seguranca-nacional', label: 'Segurança' },
-        ]
-      },
-      {
-        id: 'esportes',
-        label: 'Esportes',
-        children: [
-          { id: 'futebol', label: 'Futebol' },
-          { id: 'volei', label: 'Vôlei' },
-          { id: 'basquete', label: 'Basquete' },
-          { id: 'automobilismo', label: 'Automobilismo' },
-        ]
-      },
-      {
-        id: 'negocios',
-        label: 'Negócios',
-        children: [
-          { id: 'mercado', label: 'Mercado' },
-          { id: 'financas', label: 'Finanças' },
-          { id: 'empresas', label: 'Empresas' },
-          { id: 'startups', label: 'Startups' },
-        ]
-      },
-      {
-        id: 'inovacao',
-        label: 'Inovação',
-        children: [
-          { id: 'tecnologia', label: 'Tecnologia' },
-          { id: 'ciencia', label: 'Ciência' },
-          { id: 'ia', label: 'Inteligência Artificial' },
-          { id: 'gadgets', label: 'Gadgets' },
-        ]
-      },
-      {
-        id: 'cultura',
-        label: 'Cultura',
-        children: [
-          { id: 'cinema', label: 'Cinema' },
-          { id: 'musica', label: 'Música' },
-          { id: 'arte', label: 'Arte' },
-          { id: 'literatura', label: 'Literatura' },
-        ]
-      },
-      {
-        id: 'servicos',
-        label: 'Serviços',
-        children: [
-          { id: 'utilidade', label: 'Utilidade Pública' },
-          { id: 'clima', label: 'Clima' },
-          { id: 'transito', label: 'Trânsito' },
-          { id: 'vagas', label: 'Vagas de Emprego' },
-        ]
-      },
-    ]
-  },
-
-  // Últimas notícias
-  { id: 'ultimas', label: 'Últimas Notícias', icon: <Clock size={18} /> },
-
-  // Configurações (tema, idioma etc)
-  { id: 'configuracoes', label: 'Configurações', icon: <Settings size={18} /> },
-];
 
 /* --------------------------------------------------------------
    COMPONENTE RECURSIVO DO MENU
@@ -111,11 +29,19 @@ function MenuItemComponent({ item, level = 0 }: { item: MenuItem; level?: number
   const [isOpen, setIsOpen] = useState(false);
   const hasChildren = item.children && item.children.length > 0;
 
+  const handleClick = () => {
+    if (hasChildren) {
+      setIsOpen(!isOpen);
+    } else if (item.onClick) {
+      item.onClick();
+    }
+  };
+
   return (
     <div>
       {/* BOTÃO PRINCIPAL */}
       <button
-        onClick={() => hasChildren && setIsOpen(!isOpen)}
+        onClick={handleClick}
         className={cn(
           'w-full flex items-center justify-between px-4 py-3 text-left',
           'hover:bg-muted/50 transition-colors',
@@ -156,8 +82,72 @@ function MenuItemComponent({ item, level = 0 }: { item: MenuItem; level?: number
    COMPONENTE PRINCIPAL DO DRAWER
 ---------------------------------------------------------------- */
 export function MainDrawer() {
+  const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
+
+  const { data: editoriais } = useQuery({
+    queryKey: ['editoriais'],
+    queryFn: fetchEditoriais
+  });
+
+  const { data: subcategorias } = useQuery({
+    queryKey: ['subcategorias'],
+    queryFn: fetchSubcategorias
+  });
+
+  const { data: temas } = useQuery({
+    queryKey: ['temas-editoriais'],
+    queryFn: fetchAllTemasEditoriais
+  });
+
+  const menuItems: MenuItem[] = useMemo(() => {
+    const baseItems: MenuItem[] = [
+      {
+        id: 'home',
+        label: 'Início',
+        icon: <Home size={18} />,
+        onClick: () => {
+          navigate('/');
+          setOpen(false);
+        }
+      }
+    ];
+
+    if (editoriais && temas) {
+      const editoriasMenu: MenuItem = {
+        id: 'editorias',
+        label: 'Editorias',
+        icon: <Newspaper size={18} />,
+        children: editoriais.map(ed => {
+          const tema = temas.find(t => t.id === ed.temaEditorialId);
+          // Try to get subcategories from the editorial object first, then fallback to global list
+          const edSubcats = ed.subcategorias || subcategorias?.filter(s => s.editorialId === ed.id) || [];
+
+          return {
+            id: `ed-${ed.id}`,
+            label: tema?.descricao || ed.tipoPostagem,
+            onClick: () => navigate(`/editorial/${ed.id}`),
+            children: edSubcats.map(sub => ({
+              id: `sub-${sub.id}`,
+              label: sub.nome,
+              onClick: () => navigate(`/editorial/${ed.id}?sub=${sub.id}`)
+            }))
+          };
+        })
+      };
+      baseItems.push(editoriasMenu);
+    }
+
+    baseItems.push(
+      { id: 'ultimas', label: 'Últimas Notícias', icon: <Clock size={18} />, onClick: () => navigate('/') },
+      { id: 'configuracoes', label: 'Configurações', icon: <Settings size={18} />, onClick: () => {} }
+    );
+
+    return baseItems;
+  }, [editoriais, subcategorias, temas, navigate]);
+
   return (
-    <Sheet>
+    <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
         <button className="p-2 text-white hover:text-foreground transition-colors" aria-label="Abrir menu">
           <Menu size={25} />
