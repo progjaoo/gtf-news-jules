@@ -29,6 +29,20 @@ export interface TemaEditorialApi {
   logo: string;
 }
 
+export interface SubcategoriaApi {
+  id: number;
+  nome: string;
+  slug: string;
+  editorialId: number;
+}
+
+export interface EditorialApi {
+  id: number;
+  tipoPostagem: string;
+  temaEditorialId: number;
+  subcategorias?: SubcategoriaApi[];
+}
+
 export interface EmissoraApi {
   id: number;
   nomeSocial: string;
@@ -88,6 +102,20 @@ export async function fetchAllTemasEditoriais(): Promise<TemaEditorialApi[]> {
 export async function fetchTemaEditorial(id: number): Promise<TemaEditorialApi> {
   const res = await fetch(`${BASE_URL}/api/tema-editorial/${id}`);
   if (!res.ok) throw new Error(`Tema Editorial API error: ${res.status}`);
+  return res.json();
+}
+
+// ─── Editoriais e Subcategorias ─── //
+
+export async function fetchEditoriais(): Promise<EditorialApi[]> {
+  const res = await fetch(`${BASE_URL}/api/editorial/buscarTodos`);
+  if (!res.ok) throw new Error(`Editoriais API error: ${res.status}`);
+  return res.json();
+}
+
+export async function fetchSubcategorias(): Promise<SubcategoriaApi[]> {
+  const res = await fetch(`${BASE_URL}/api/subcategorias/buscarTodasSubcategorias`);
+  if (!res.ok) throw new Error(`Subcategorias API error: ${res.status}`);
   return res.json();
 }
 
