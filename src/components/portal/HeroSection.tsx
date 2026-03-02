@@ -46,7 +46,7 @@ export function HeroSection({ mainNews, sideNews }: HeroSectionProps) {
             
               <h1 
                 className="text-2xl md:text-2xl lg:text-3xl font-extrabold leading-tight tracking-tight transition-colors"
-                style={{ color: mainNews.corTema || '#b91c1c' }} 
+                
               >
                 {mainNews.titulo}
               </h1>
