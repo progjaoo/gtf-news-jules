@@ -13,6 +13,7 @@ export interface PostApi {
   imagem: string;
   publicadoEm: string | null;
   editorial: string;
+  subcategoria?: string;
   corTema: string;
   usuarioCriacaoId: number;
   usuarioCriacao: string;
