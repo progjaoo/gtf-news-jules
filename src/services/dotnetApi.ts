@@ -44,6 +44,17 @@ export interface EditorialApi {
   subcategorias?: SubcategoriaApi[];
 }
 
+export interface RegiaoApi {
+  id: number;
+  nome: string;
+}
+
+export interface CidadeApi {
+  id: number;
+  nome: string;
+  regiaoId?: number;
+}
+
 export interface EmissoraApi {
   id: number;
   nomeSocial: string;
@@ -117,6 +128,18 @@ export async function fetchEditoriais(): Promise<EditorialApi[]> {
 export async function fetchSubcategorias(): Promise<SubcategoriaApi[]> {
   const res = await fetch(`${BASE_URL}/api/subcategorias/buscarTodasSubcategorias`);
   if (!res.ok) throw new Error(`Subcategorias API error: ${res.status}`);
+  return res.json();
+}
+
+export async function fetchRegioes(): Promise<RegiaoApi[]> {
+  const res = await fetch(`${BASE_URL}/api/regiao/buscarTodos`);
+  if (!res.ok) throw new Error(`Regiões API error: ${res.status}`);
+  return res.json();
+}
+
+export async function fetchCidades(): Promise<CidadeApi[]> {
+  const res = await fetch(`${BASE_URL}/api/cidade/buscarTodos`);
+  if (!res.ok) throw new Error(`Cidades API error: ${res.status}`);
   return res.json();
 }
 
