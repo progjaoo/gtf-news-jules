@@ -4,8 +4,10 @@ import { StickyHeader } from "@/components/portal/StickyHeader";
 import { Footer } from "@/components/portal/Footer";
 import { NewsCard } from "@/components/portal/NewsCard";
 import { usePostById, usePosts } from "@/hooks/useArticles";
-import { MessageCircle, Share2 } from "lucide-react";
+import { MessageCircle, Share2, ChevronRight, Home } from "lucide-react";
 import { useEditorial } from "@/contexts/EditorialContext";
+import { useStation } from "@/contexts/StationContext";
+import { Link } from "react-router-dom";
 
 export default function ArtigoPage() {
   const { id } = useParams();
@@ -13,6 +15,7 @@ export default function ArtigoPage() {
   const { data: noticia, isLoading } = usePostById(postId);
   const { data: allPosts } = usePosts();
   const { allEditorials, setEditorial, editorials } = useEditorial();
+  const { currentStation } = useStation();
 
   // PASSO 1: When article loads, set editorial color based on article's editorial
   React.useEffect(() => {
@@ -68,6 +71,43 @@ export default function ArtigoPage() {
       <StickyHeader />
 
       <div className="max-w-[1200px] mx-auto px-4 mt-6">
+        {/* BREADCRUMB DINÂMICO */}
+        <nav className="flex items-center gap-2 text-xs text-muted-foreground mb-6 overflow-x-auto no-scrollbar whitespace-nowrap pb-2">
+          <Link to="/" className="flex items-center gap-1 hover:text-primary transition-colors">
+            <Home size={14} />
+            <span>Home</span>
+          </Link>
+
+          <ChevronRight size={12} />
+
+          <Link to={currentStation.homePath} className="hover:text-primary transition-colors">
+            {currentStation.name}
+          </Link>
+
+          {noticia?.editorial && (
+            <>
+              <ChevronRight size={12} />
+              <span className="hover:text-primary transition-colors cursor-default">
+                {noticia.editorial}
+              </span>
+            </>
+          )}
+
+          {noticia?.subcategoria && (
+            <>
+              <ChevronRight size={12} />
+              <span className="hover:text-primary transition-colors cursor-default">
+                {noticia.subcategoria}
+              </span>
+            </>
+          )}
+
+          <ChevronRight size={12} />
+          <span className="text-foreground font-medium truncate max-w-[200px] md:max-w-md">
+            {noticia?.titulo}
+          </span>
+        </nav>
+
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-10 items-start">
 
           {/* CONTEÚDO */}
