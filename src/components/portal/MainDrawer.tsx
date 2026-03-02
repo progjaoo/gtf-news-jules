@@ -1,11 +1,14 @@
 import React, { useState, useMemo } from 'react';
 import { 
   Menu, ChevronDown, ChevronRight, 
-  Newspaper, Settings, Home, Clock 
+  Newspaper, Settings, Home, Clock, MapPin
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { fetchEditoriais, fetchSubcategorias, fetchAllTemasEditoriais } from '@/services/dotnetApi';
+import {
+  fetchEditoriais, fetchSubcategorias, fetchAllTemasEditoriais,
+  fetchRegioes, fetchCidades
+} from '@/services/dotnetApi';
 
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
@@ -100,6 +103,16 @@ export function MainDrawer() {
     queryFn: fetchAllTemasEditoriais
   });
 
+  const { data: regioes } = useQuery({
+    queryKey: ['regioes'],
+    queryFn: fetchRegioes
+  });
+
+  const { data: cidades } = useQuery({
+    queryKey: ['cidades'],
+    queryFn: fetchCidades
+  });
+
   const menuItems: MenuItem[] = useMemo(() => {
     const baseItems: MenuItem[] = [
       {
@@ -126,11 +139,17 @@ export function MainDrawer() {
           return {
             id: `ed-${ed.id}`,
             label: tema?.descricao || ed.tipoPostagem,
-            onClick: () => navigate(`/editorial/${ed.id}`),
+            onClick: () => {
+              navigate(`/editorial/${ed.id}`);
+              setOpen(false);
+            },
             children: edSubcats.map(sub => ({
               id: `sub-${sub.id}`,
               label: sub.nome,
-              onClick: () => navigate(`/editorial/${ed.id}?sub=${sub.id}`)
+              onClick: () => {
+                navigate(`/editorial/${ed.id}?sub=${sub.id}`);
+                setOpen(false);
+              }
             }))
           };
         })
@@ -138,13 +157,50 @@ export function MainDrawer() {
       baseItems.push(editoriasMenu);
     }
 
+    if (regioes) {
+      const regioesMenu: MenuItem = {
+        id: 'regioes',
+        label: 'Regiões',
+        icon: <MapPin size={18} />,
+        children: regioes.map(reg => ({
+          id: `reg-${reg.id}`,
+          label: reg.nome,
+          children: cidades?.filter(c => c.regiaoId === reg.id).map(cid => ({
+            id: `cid-${cid.id}`,
+            label: cid.nome,
+            onClick: () => {
+              // Navigation for city could be implemented later
+              navigate(`/busca?q=${encodeURIComponent(cid.nome)}`);
+              setOpen(false);
+            }
+          }))
+        }))
+      };
+      baseItems.push(regioesMenu);
+    }
+
     baseItems.push(
-      { id: 'ultimas', label: 'Últimas Notícias', icon: <Clock size={18} />, onClick: () => navigate('/') },
-      { id: 'configuracoes', label: 'Configurações', icon: <Settings size={18} />, onClick: () => {} }
+      {
+        id: 'ultimas',
+        label: 'Últimas Notícias',
+        icon: <Clock size={18} />,
+        onClick: () => {
+          navigate('/');
+          setOpen(false);
+        }
+      },
+      {
+        id: 'configuracoes',
+        label: 'Configurações',
+        icon: <Settings size={18} />,
+        onClick: () => {
+          setOpen(false);
+        }
+      }
     );
 
     return baseItems;
-  }, [editoriais, subcategorias, temas, navigate]);
+  }, [editoriais, subcategorias, temas, regioes, cidades, navigate]);
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
