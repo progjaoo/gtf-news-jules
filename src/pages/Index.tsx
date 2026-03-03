@@ -9,11 +9,8 @@ import { NewsCard } from '@/components/portal/NewsCard';
 import { VerMaisButton } from '@/components/portal/VerMaisButton';
 import { usePosts } from '@/hooks/useArticles';
 import { useNavigate } from 'react-router-dom';
-import { SEO } from '@/components/portal/SEO';
-import { useStation } from '@/contexts/StationContext';
 
 function PortalContent() {
-  const { currentStation } = useStation();
   const { data: posts, isLoading } = usePosts();
   const navigate = useNavigate();
   
@@ -31,10 +28,6 @@ function PortalContent() {
 
   return (
     <div className="min-h-screen bg-background">
-      <SEO
-        title={currentStation.name}
-        description={`Portal de notícias da ${currentStation.name}. Fique por dentro de tudo o que acontece no Brasil e no mundo.`}
-      />
       <StickyHeader />
       <AdBanner />
 

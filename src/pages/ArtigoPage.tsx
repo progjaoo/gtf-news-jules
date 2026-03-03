@@ -3,28 +3,16 @@ import { useParams } from "react-router-dom";
 import { StickyHeader } from "@/components/portal/StickyHeader";
 import { Footer } from "@/components/portal/Footer";
 import { NewsCard } from "@/components/portal/NewsCard";
-import { usePostById, usePostBySlug, usePosts } from "@/hooks/useArticles";
+import { usePostById, usePosts } from "@/hooks/useArticles";
 import { MessageCircle, Share2, ChevronRight, Home } from "lucide-react";
 import { useEditorial } from "@/contexts/EditorialContext";
-import { SEO } from "@/components/portal/SEO";
 import { useStation } from "@/contexts/StationContext";
 import { Link } from "react-router-dom";
 
 export default function ArtigoPage() {
-  const { idOrSlug } = useParams();
-  const isId = !isNaN(Number(idOrSlug));
-
-  const { data: noticiaById, isLoading: isLoadingId } = usePostById(isId ? Number(idOrSlug) : 0);
-  const { data: noticiaBySlug, isLoading: isLoadingSlug } = usePostBySlug(!isId ? idOrSlug || '' : '');
-
-  const noticia = isId ? noticiaById : noticiaBySlug;
-  const isLoading = isId ? isLoadingId : isLoadingSlug;
-
-  // Use effective values for SEO even when loading or not found
-  const seoTitle = noticia?.titulo || "Carregando...";
-  const seoDescription = noticia?.subtitulo || noticia?.conteudo?.substring(0, 160) || "...";
-  const seoImage = noticia?.imagem;
-
+  const { id } = useParams();
+  const postId = Number(id) || 0;
+  const { data: noticia, isLoading } = usePostById(postId);
   const { data: allPosts } = usePosts();
   const { allEditorials, setEditorial, editorials } = useEditorial();
   const { currentStation } = useStation();
@@ -56,34 +44,30 @@ export default function ArtigoPage() {
     return fallbackColor || '#E83C25';
   };
 
-  const relatedNews = (allPosts || []).filter((n) => n.id !== noticia?.id).slice(0, 4);
+  const relatedNews = (allPosts || []).filter((n) => n.id !== postId).slice(0, 4);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <StickyHeader />
+          <div className="p-20 text-center text-2xl text-muted-foreground">Carregando...</div>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (!noticia) {
+    return (
+      <div className="min-h-screen bg-background">
+        <StickyHeader />
+        <div className="p-20 text-center text-2xl font-semibold">Notícia não encontrada.</div>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="bg-background">
-      <SEO
-        title={seoTitle}
-        description={seoDescription}
-        image={seoImage}
-        type="article"
-        author={noticia?.usuarioCriacao}
-        publishedTime={noticia?.publicadoEm || undefined}
-        section={noticia?.editorial}
-      />
-
-      {isLoading ? (
-        <div className="min-h-screen bg-background">
-          <StickyHeader />
-            <div className="p-20 text-center text-2xl text-muted-foreground">Carregando...</div>
-          <Footer />
-        </div>
-      ) : !noticia ? (
-        <div className="min-h-screen bg-background">
-          <StickyHeader />
-          <div className="p-20 text-center text-2xl font-semibold">Notícia não encontrada.</div>
-          <Footer />
-        </div>
-      ) : (
-        <>
       <StickyHeader />
 
       <div className="max-w-[1200px] mx-auto px-4 mt-6">
@@ -228,9 +212,7 @@ export default function ArtigoPage() {
         </div>
       </div>
 
-          <Footer />
-        </>
-      )}
+      <Footer />
     </div>
   );
 }
