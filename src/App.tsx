@@ -26,41 +26,41 @@ const App = () => (
           <EditorialProvider>
             <BrowserRouter>
               <Routes>
-              <Route path="/" element={<Navigate to="/radio88fm" replace />} />
-              <Route
-                path="/radio88fm"
-                element={
-                  <StationRoute stationId="radio88fm">
-                    <Radio88FMPage />
-                  </StationRoute>
-                }
-              />
-              <Route
-                path="/fatopopular"
-                element={
-                  <StationRoute stationId="fatopopular">
-                    <Index />
-                  </StationRoute>
-                }
-              />
-              <Route
-                path="/radio89maravilha"
-                element={
-                  <StationRoute stationId="radio89maravilha">
-                    <Index />
-                  </StationRoute>
-                }
-              />
-              <Route
-                path="/gtfnews"
-                element={
-                  <StationRoute stationId="gtfnews">
-                    <Index />
-                  </StationRoute>
-                }
-              />
-              <Route path="/editorial/:editorialId" element={<EditorialPage />} />
-              <Route path="/busca" element={<SearchPage />} />
+                <Route path="/" element={<Navigate to="/radio88fm" replace />} />
+                <Route
+                  path="/radio88fm"
+                  element={
+                    <StationRoute stationId="radio88fm">
+                      <Radio88FMPage />
+                    </StationRoute>
+                  }
+                />
+                <Route
+                  path="/fatopopular"
+                  element={
+                    <StationRoute stationId="fatopopular">
+                      <Index />
+                    </StationRoute>
+                  }
+                />
+                <Route
+                  path="/radio89maravilha"
+                  element={
+                    <StationRoute stationId="radio89maravilha">
+                      <Index />
+                    </StationRoute>
+                  }
+                />
+                <Route
+                  path="/gtfnews"
+                  element={
+                    <StationRoute stationId="gtfnews">
+                      <Index />
+                    </StationRoute>
+                  }
+                />
+                <Route path="/editorial/:editorialId" element={<EditorialPage />} />
+                <Route path="/busca" element={<SearchPage />} />
                 <Route path="/noticia/:idOrSlug" element={<ArtigoPage />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>

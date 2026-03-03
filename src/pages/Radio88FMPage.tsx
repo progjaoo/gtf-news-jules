@@ -69,6 +69,7 @@ function HeroCard({ post, size = 'normal' }: { post: PostApi; size?: 'large' | '
 function Radio88FMContent() {
   const navigate = useNavigate();
   const { currentStation } = useStation();
+  const { getEditorialColor } = useEditorial();
 
   // Buscar posts dos editoriais da 88FM: Receitas(9), Música(10), Enquete(11), Debates(12)
   const { data: receitasPosts } = usePostsByEditorial(9);
@@ -170,7 +171,7 @@ function Radio88FMContent() {
             <button
               onClick={() => navigate('/editorial/6')}
               className="px-6 py-2 rounded-md font-bold text-xs uppercase tracking-wide text-white transition-all hover:opacity-90"
-              style={{ backgroundColor: '#038CE4' }}
+              style={{ backgroundColor: getEditorialColor('cultura') }}
             >
               Ver mais Cultura
             </button>
@@ -179,7 +180,7 @@ function Radio88FMContent() {
             <button
               onClick={() => navigate('/editorial/1')}
               className="px-6 py-2 rounded-md font-bold text-xs uppercase tracking-wide text-white transition-all hover:opacity-90"
-              style={{ backgroundColor: '#E83C25' }}
+              style={{ backgroundColor: getEditorialColor('noticias') }}
             >
               Ver mais Notícias
             </button>
@@ -188,7 +189,7 @@ function Radio88FMContent() {
             <button
               onClick={() => navigate('/editorial/2')}
               className="px-6 py-2 rounded-md font-bold text-xs uppercase tracking-wide text-white transition-all hover:opacity-90"
-              style={{ backgroundColor: '#06AA48' }}
+              style={{ backgroundColor: getEditorialColor('esportes') }}
             >
               Ver mais Esportes
             </button>
@@ -200,7 +201,7 @@ function Radio88FMContent() {
           <button
             onClick={() => navigate('/fatopopular')}
             className="px-80 py-2 rounded-md font-bold text-sm uppercase tracking-wide text-white transition-all hover:opacity-90"
-            style={{ backgroundColor: '#132D52' }}
+            style={{ backgroundColor: getEditorialColor('fatopopular') }}
           >
             Ver mais no Fato Popular
           </button>

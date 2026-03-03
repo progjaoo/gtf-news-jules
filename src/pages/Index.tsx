@@ -7,17 +7,36 @@ import { Footer } from '@/components/portal/Footer';
 import { StickyHeader } from '@/components/portal/StickyHeader';
 import { NewsCard } from '@/components/portal/NewsCard';
 import { VerMaisButton } from '@/components/portal/VerMaisButton';
-import { usePosts } from '@/hooks/useArticles';
+import { usePosts, usePostsByEditorial } from '@/hooks/useArticles';
 import { useNavigate } from 'react-router-dom';
 import { SEO } from '@/components/portal/SEO';
 import { useStation } from '@/contexts/StationContext';
+import { useEditorial } from '@/contexts/EditorialContext';
 
 function PortalContent() {
   const { currentStation } = useStation();
+  const { getEditorialColor } = useEditorial();
   const { data: posts, isLoading } = usePosts();
   const navigate = useNavigate();
+
+  // Buscar posts da Rádio 88 FM (Trigger)
+  const { data: receitasPosts } = usePostsByEditorial(9);
+  const { data: musicaPosts } = usePostsByEditorial(10);
+  const { data: enquetePosts } = usePostsByEditorial(11);
+  const { data: debatesPosts } = usePostsByEditorial(12);
+
+  const radio88News = [
+    ...(receitasPosts || []),
+    ...(musicaPosts || []),
+    ...(enquetePosts || []),
+    ...(debatesPosts || []),
+  ].slice(0, 5);
   
-  const allNews = posts || [];
+  // Filtra posts da Rádio 88 FM do feed principal (Emissora ID: 1, mas posts públicos podem vir misturados)
+  // Como não temos o ID da emissora no PostApi retornado, vamos filtrar pelos editoriais específicos se for o caso,
+  // ou assumir que a API de posts públicos já traz o que deve ser exibido no Fato Popular.
+  // Entretanto, o requisito diz para filtrar. Vou filtrar pelos editoriais da 88FM.
+  const allNews = (posts || []).filter(n => ![9, 10, 11, 12].includes(Number(n.editorial)));
   
   const mainNews = allNews[0];
   const sideNews = allNews.slice(1, 10);
@@ -57,6 +76,31 @@ function PortalContent() {
           <EditorialSection title="Negócios" editorial="negocios" news={negociosNews} />
           <VerMaisButton size="full" label="Ver mais Negócios" onClick={() => navigate('/editorial/3')} />
         </>
+      )}
+
+      {/* Rádio 88 FM Trigger Section */}
+      {radio88News.length > 0 && (
+        <section className="container py-8">
+          <SectionHeader title="Rádio 88 FM" editorial="cultura" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4 mt-6">
+            {radio88News.map((news) => (
+              <NewsCard
+                key={news.id}
+                news={news}
+                variant="small"
+                showSubtitle={false}
+                className="bg-card shadow-sm border border-border/40"
+              />
+            ))}
+          </div>
+          <div className="flex justify-center mt-6">
+            <VerMaisButton
+              size="medium"
+              label="Ver tudo da 88 FM"
+              onClick={() => navigate('/radio88fm')}
+            />
+          </div>
+        </section>
       )}
 
       {/* Theme Sections */}

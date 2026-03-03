@@ -167,13 +167,24 @@ export function EditorialProvider({ children }: { children: ReactNode }) {
   const resolveEditorialColor = (editorialName?: string, fallbackColor?: string) => {
     if (editorialName) {
       const normalizedName = editorialName.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
+      // 1. Tenta buscar diretamente nos temas da API se disponíveis
+      if (apiEditorials) {
+        const apiMatch = apiEditorials.find(t => {
+          const tDesc = t.descricao.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+          return tDesc === normalizedName || tDesc.includes(normalizedName) || normalizedName.includes(tDesc);
+        });
+        if (apiMatch) return apiMatch.corPrimaria;
+      }
+
+      // 2. Fallback para lista mapeada (que também pode ter cores da API)
       const match = allEditorialsList.find(e => {
         const eName = e.label.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
         return eName === normalizedName || eName.startsWith(normalizedName) || normalizedName.startsWith(eName);
       });
       if (match) return match.corPrimaria;
     }
-    return fallbackColor || '#038CE4';
+    return fallbackColor || currentStation.color || '#038CE4';
   };
 
   return (
