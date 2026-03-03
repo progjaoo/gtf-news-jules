@@ -1,11 +1,12 @@
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Footer } from '@/components/portal/Footer';
-import { useSearchPosts } from '@/hooks/useArticles';
+import { useSearchPosts, useFilteredPosts } from '@/hooks/useArticles';
 import { useStation } from '@/contexts/StationContext';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Search } from 'lucide-react';
 import { useState } from 'react';
 import { StationSelector } from '@/components/portal/StationSelector';
+import { PostApi, resolveImageUrl } from '@/services/dotnetApi';
 import logo88 from '@/assets/logoazul.svg';
 import logomaravilha from '@/assets/logomaravilha.svg';
 
@@ -16,7 +17,7 @@ const stationLogos: Record<string, string> = {
   'fatopopular': logo88,
 };
 
-function SearchResultCard({ post, stationColor }: { post: any; stationColor: string }) {
+function SearchResultCard({ post, stationColor }: { post: PostApi; stationColor: string }) {
   const navigate = useNavigate();
   const date = post.publicadoEm
     ? new Date(post.publicadoEm).toLocaleDateString('pt-BR', {
@@ -31,7 +32,7 @@ function SearchResultCard({ post, stationColor }: { post: any; stationColor: str
     >
       <div className="flex-shrink-0 w-[220px] h-[140px] rounded-lg overflow-hidden bg-muted">
         <img
-          src={post.imagem || '/placeholder.svg'}
+          src={resolveImageUrl(post.imagem)}
           alt={post.titulo}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />
@@ -63,16 +64,37 @@ function SearchResultCard({ post, stationColor }: { post: any; stationColor: str
 export default function SearchPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const q = searchParams.get('q') || '';
+  const dateFilter = Number(searchParams.get('dateFilter')) || 0;
+  const orderBy = Number(searchParams.get('orderBy')) || 0;
+
   const [inputValue, setInputValue] = useState(q);
-  const { data: results, isLoading } = useSearchPosts(q);
+
+  const { data: searchResults, isLoading: isSearchLoading } = useSearchPosts(q);
+  const { data: filteredResults, isLoading: isFilterLoading } = useFilteredPosts(dateFilter, orderBy);
+
+  const results = q ? searchResults : filteredResults;
+  const isLoading = q ? isSearchLoading : isFilterLoading;
+
   const { currentStation } = useStation();
   const logoSrc = stationLogos[currentStation.id];
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (inputValue.trim().length >= 2) {
-      setSearchParams({ q: inputValue.trim() });
+    const params: Record<string, string> = {};
+    if (inputValue.trim().length >= 2) params.q = inputValue.trim();
+    if (dateFilter) params.dateFilter = dateFilter.toString();
+    if (orderBy) params.orderBy = orderBy.toString();
+    setSearchParams(params);
+  };
+
+  const handleFilterChange = (key: string, value: string) => {
+    const newParams = new URLSearchParams(searchParams);
+    if (value === '0') {
+      newParams.delete(key);
+    } else {
+      newParams.set(key, value);
     }
+    setSearchParams(newParams);
   };
 
   return (
@@ -122,17 +144,46 @@ export default function SearchPage() {
       </div>
 
       {/* Filtros */}
-      <div className="border-b border-border">
-        <div className="container py-3 flex items-center justify-between">
-          <div className="flex items-center gap-4 text-sm text-muted-foreground">
-            <span>EXIBINDO</span>
-            <span className="font-bold" style={{ color: currentStation.color }}>
-              TODOS OS RESULTADOS
+      <div className="border-b border-border bg-muted/20">
+        <div className="container py-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <span className="font-medium">EXIBINDO:</span>
+            <span className="font-bold uppercase" style={{ color: currentStation.color }}>
+              {q ? `RESULTADOS PARA "${q}"` : "ÚLTIMAS NOTÍCIAS"}
             </span>
-            <span>MAIS</span>
-            <span className="font-bold" style={{ color: currentStation.color }}>
-              RECENTES
-            </span>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-4">
+            <div className="flex items-center gap-2">
+              <label htmlFor="dateFilter" className="text-xs font-bold text-muted-foreground uppercase">Filtrar por:</label>
+              <select
+                id="dateFilter"
+                value={dateFilter}
+                onChange={(e) => handleFilterChange('dateFilter', e.target.value)}
+                className="bg-white border border-border rounded px-2 py-1 text-xs outline-none focus:ring-1 focus:ring-primary"
+                style={{ color: currentStation.color }}
+              >
+                <option value="0">Qualquer data</option>
+                <option value="1">Última hora</option>
+                <option value="2">Última semana</option>
+                <option value="3">Último mês</option>
+                <option value="4">Último ano</option>
+              </select>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <label htmlFor="orderBy" className="text-xs font-bold text-muted-foreground uppercase">Ordenar:</label>
+              <select
+                id="orderBy"
+                value={orderBy}
+                onChange={(e) => handleFilterChange('orderBy', e.target.value)}
+                className="bg-white border border-border rounded px-2 py-1 text-xs outline-none focus:ring-1 focus:ring-primary"
+                style={{ color: currentStation.color }}
+              >
+                <option value="0">Mais recentes</option>
+                <option value="1">Mais antigos</option>
+              </select>
+            </div>
           </div>
         </div>
       </div>
@@ -169,18 +220,13 @@ export default function SearchPage() {
           </div>
         )}
 
-        {!isLoading && results && results.length === 0 && q && (
+        {!isLoading && results && results.length === 0 && (
           <div className="text-center py-16 text-muted-foreground">
             <Search size={48} className="mx-auto mb-4 opacity-30" />
             <p className="text-lg font-semibold">Nenhum resultado encontrado</p>
-            <p className="text-sm mt-1">Tente buscar por outros termos.</p>
-          </div>
-        )}
-
-        {!q && (
-          <div className="text-center py-16 text-muted-foreground">
-            <Search size={48} className="mx-auto mb-4 opacity-30" />
-            <p className="text-lg">Digite um termo para buscar notícias.</p>
+            <p className="text-sm mt-1">
+              {q ? "Tente buscar por outros termos." : "Não há notícias para os filtros selecionados."}
+            </p>
           </div>
         )}
       </div>

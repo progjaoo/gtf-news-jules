@@ -185,7 +185,7 @@ export function MainDrawer() {
         label: 'Últimas Notícias',
         icon: <Clock size={18} />,
         onClick: () => {
-          navigate('/');
+          navigate('/busca?orderBy=0');
           setOpen(false);
         }
       },
