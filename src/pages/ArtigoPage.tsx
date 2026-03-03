@@ -114,14 +114,14 @@ export default function ArtigoPage() {
           <main className="bg-white rounded-xl shadow-sm p-8">
             {/* EDITORIA */}
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: resolveEditorialColor(noticia.editorial, noticia.corTema) }} />
-              <span className="font-semibold uppercase text-sm" style={{ color: resolveEditorialColor(noticia.editorial, noticia.corTema) }}>
+              <div className="w-3 h-3 rounded-sm" style={{backgroundColor: "black"}}/>
+              <span className="font-semibold uppercase text-sm" >
                 {noticia.editorial || 'NOTÍCIAS'}
               </span>
             </div>
 
             {/* TÍTULO */}
-            <h1 className="text-3xl md:text-4xl font-bold mb-4">{noticia.titulo}</h1>
+            <h1 style={{ color: resolveEditorialColor(noticia.editorial, noticia.corTema) }} className="text-3xl md:text-4xl font-bold mb-4">{noticia.titulo}</h1>
 
             {/* SUBTÍTULO */}
             {noticia.subtitulo && (
