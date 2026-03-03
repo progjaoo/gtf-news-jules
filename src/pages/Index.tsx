@@ -50,10 +50,6 @@ function PortalContent() {
 
   return (
     <div className="min-h-screen bg-background">
-      <SEO
-        title={currentStation.name}
-        description={`Portal de notícias da ${currentStation.name}. Fique por dentro de tudo o que acontece no Brasil e no mundo.`}
-      />
       <StickyHeader />
       <AdBanner />
 

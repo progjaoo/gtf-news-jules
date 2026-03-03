@@ -103,12 +103,6 @@ export async function searchPosts(query: string): Promise<PostApi[]> {
   return res.json();
 }
 
-export async function fetchPostBySlug(slug: string): Promise<PostApi> {
-  const res = await fetch(`${BASE_URL}/api/posts/slug/${slug}`);
-  if (!res.ok) throw new Error(`Post by Slug API error: ${res.status}`);
-  return res.json();
-}
-
 export async function fetchFilteredPosts(dateFilter: number, orderBy: number): Promise<PostApi[]> {
   const res = await fetch(`${BASE_URL}/api/posts/filtro?dateFilter=${dateFilter}&orderBy=${orderBy}`);
   if (!res.ok) throw new Error(`Filter API error: ${res.status}`);
