@@ -9,7 +9,6 @@ import { PostApi, resolveImageUrl } from '@/services/dotnetApi';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useStation } from '@/contexts/StationContext';
 import { useEditorial } from '@/contexts/EditorialContext';
-import { SEO } from '@/components/portal/SEO';
 
 function cn(...classes: (string | boolean | undefined)[]) {
   return classes.filter(Boolean).join(' ');
@@ -110,10 +109,6 @@ function Radio88FMContent() {
 
   return (
     <div className="min-h-screen bg-background">
-      <SEO
-        title={currentStation.name}
-        description={`Acompanhe as últimas notícias, música e debates da ${currentStation.name}.`}
-      />
       <StickyHeader />
 
       {/* Hero Grid 3x2 com posts da Rádio 88 FM */}
