@@ -3,6 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { HelmetProvider } from "react-helmet-async";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import ArtigoPage from "./pages/ArtigoPage";
@@ -20,10 +21,11 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <StationProvider>
-        <EditorialProvider>
-          <BrowserRouter>
-            <Routes>
+      <HelmetProvider>
+        <StationProvider>
+          <EditorialProvider>
+            <BrowserRouter>
+              <Routes>
               <Route path="/" element={<Navigate to="/radio88fm" replace />} />
               <Route
                 path="/radio88fm"
@@ -59,12 +61,13 @@ const App = () => (
               />
               <Route path="/editorial/:editorialId" element={<EditorialPage />} />
               <Route path="/busca" element={<SearchPage />} />
-              <Route path="/noticia/:id" element={<ArtigoPage />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
-        </EditorialProvider>
-      </StationProvider>
+                <Route path="/noticia/:idOrSlug" element={<ArtigoPage />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </BrowserRouter>
+          </EditorialProvider>
+        </StationProvider>
+      </HelmetProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );

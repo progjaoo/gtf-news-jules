@@ -1,10 +1,20 @@
 import { useQuery } from '@tanstack/react-query';
-import { fetchPostsPublic, fetchPostsByEditorial, searchPosts, fetchFilteredPosts, PostApi } from '@/services/dotnetApi';
+import { fetchPostsPublic, fetchPostsByEditorial, searchPosts, fetchPostBySlug, fetchFilteredPosts, PostApi } from '@/services/dotnetApi';
 
 export function usePosts() {
   return useQuery<PostApi[]>({
     queryKey: ['posts-public'],
     queryFn: fetchPostsPublic,
+    staleTime: 1000 * 60 * 5,
+    retry: 1,
+  });
+}
+
+export function usePostBySlug(slug: string) {
+  return useQuery<PostApi | undefined>({
+    queryKey: ['posts-public', 'slug', slug],
+    queryFn: () => fetchPostBySlug(slug),
+    enabled: slug.length > 0 && isNaN(Number(slug)),
     staleTime: 1000 * 60 * 5,
     retry: 1,
   });

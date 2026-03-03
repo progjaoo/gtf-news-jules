@@ -9,8 +9,11 @@ import { usePostsByEditorial } from '@/hooks/useArticles';
 import { useEditorial, EditorialType } from '@/contexts/EditorialContext';
 import { Skeleton } from '@/components/ui/skeleton';
 import { AlertCircle } from 'lucide-react';
+import { SEO } from '@/components/portal/SEO';
+import { useStation } from '@/contexts/StationContext';
 
 export default function EditorialPage() {
+  const { currentStation } = useStation();
   const { editorialId } = useParams<{ editorialId: string }>();
   const numericId = Number(editorialId) || 1;
   const { editorials, setEditorial, getEditorialByApiId } = useEditorial();
@@ -33,6 +36,10 @@ export default function EditorialPage() {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO
+        title={editorialLabel}
+        description={`Confira as últimas notícias de ${editorialLabel} na ${currentStation.name}.`}
+      />
       <StickyHeader />
       <AdBanner />
 

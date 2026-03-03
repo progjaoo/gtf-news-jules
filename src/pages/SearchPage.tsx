@@ -7,6 +7,7 @@ import { Search } from 'lucide-react';
 import { useState } from 'react';
 import { StationSelector } from '@/components/portal/StationSelector';
 import { PostApi, resolveImageUrl } from '@/services/dotnetApi';
+import { SEO } from '@/components/portal/SEO';
 import logo88 from '@/assets/logoazul.svg';
 import logomaravilha from '@/assets/logomaravilha.svg';
 
@@ -72,7 +73,25 @@ export default function SearchPage() {
   const { data: searchResults, isLoading: isSearchLoading } = useSearchPosts(q);
   const { data: filteredResults, isLoading: isFilterLoading } = useFilteredPosts(dateFilter, orderBy);
 
-  const results = q ? searchResults : filteredResults;
+  // Combine results if searching, otherwise just use filtered results
+  const results = useMemo(() => {
+    if (!q) return filteredResults;
+    if (!searchResults) return [];
+
+    // In a real API, we'd pass filters to the search endpoint.
+    // For now, we simulate client-side filtering/ordering if search results exist.
+    let list = [...searchResults];
+
+    // Simple mock filter logic since we don't have search+filter combined endpoint yet
+    if (orderBy === 1) { // Mais antigos
+       list.sort((a, b) => new Date(a.publicadoEm || 0).getTime() - new Date(b.publicadoEm || 0).getTime());
+    } else { // Mais recentes (default)
+       list.sort((a, b) => new Date(b.publicadoEm || 0).getTime() - new Date(a.publicadoEm || 0).getTime());
+    }
+
+    return list;
+  }, [q, searchResults, filteredResults, orderBy]);
+
   const isLoading = q ? isSearchLoading : isFilterLoading;
 
   const { currentStation } = useStation();
@@ -99,6 +118,10 @@ export default function SearchPage() {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO
+        title={q ? `Busca: ${q}` : "Últimas Notícias"}
+        description={q ? `Resultados da busca por ${q} na ${currentStation.name}.` : "Fique por dentro das últimas notícias."}
+      />
       {/* PASSO 4: Search page has only TopHeader-style bar + search */}
       <header className="bg-card border-b border-border">
         <div className="container flex items-center justify-between h-12">

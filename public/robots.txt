@@ -1,14 +1,9 @@
-User-agent: Googlebot
-Allow: /
-
-User-agent: Bingbot
-Allow: /
-
-User-agent: Twitterbot
-Allow: /
-
-User-agent: facebookexternalhit
-Allow: /
-
 User-agent: *
 Allow: /
+
+# Bloquear área administrativa
+Disallow: /admin
+Disallow: /api
+
+# Sitemap
+Sitemap: https://portalgtf.com.br/sitemap.xml
