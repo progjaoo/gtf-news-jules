@@ -17,7 +17,6 @@ export default function ArtigoPage() {
   const { allEditorials, setEditorial, editorials } = useEditorial();
   const { currentStation } = useStation();
 
-  // PASSO 1: When article loads, set editorial color based on article's editorial
   React.useEffect(() => {
     if (noticia?.editorial) {
       const normalizedName = noticia.editorial.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
@@ -114,14 +113,14 @@ export default function ArtigoPage() {
           <main className="bg-white rounded-xl shadow-sm p-8">
             {/* EDITORIA */}
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-3 h-3 rounded-sm" style={{backgroundColor: "black"}}/>
-              <span className="font-semibold uppercase text-sm" >
-                {noticia.editorial || 'NOTÍCIAS'}
-              </span>
+              <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: resolveEditorialColor(noticia.editorial, noticia.corTema) }} />
+                <span className="font-semibold uppercase text-sm" >
+                  {noticia.editorial || 'NOTÍCIAS'}
+                </span>
             </div>
 
             {/* TÍTULO */}
-            <h1 style={{ color: resolveEditorialColor(noticia.editorial, noticia.corTema) }} className="text-3xl md:text-4xl font-bold mb-4">{noticia.titulo}</h1>
+            <h1  className="text-3xl md:text-4xl font-bold mb-4">{noticia.titulo}</h1>
 
             {/* SUBTÍTULO */}
             {noticia.subtitulo && (

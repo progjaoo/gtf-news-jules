@@ -12,7 +12,6 @@ import { useStation, stations, StationType } from '@/contexts/StationContext';
 
 const stationTextColors: Record<StationType, string> = {
   radio88fm: 'text-station-88fm',
-  radio89maravilha: 'text-station-maravilha',
   gtfnews: 'text-station-gtfnews',
   fatopopular: 'text-station-fatopopular',
 };

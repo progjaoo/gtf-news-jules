@@ -1,6 +1,6 @@
 // Serviço centralizado para consumir a API .NET
 
-const BASE_URL = import.meta.env.VITE_DOTNET_URL || 'http://localhost:5091';
+const BASE_URL = import.meta.env.VITE_DOTNET_URL || 'http://129.121.47.191';
 
 // ─── Interfaces ─── //
 
