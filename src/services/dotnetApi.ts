@@ -1,8 +1,4 @@
-// Serviço centralizado para consumir a API .NET
-
-const BASE_URL = import.meta.env.VITE_DOTNET_URL || 'http://129.121.47.191';
-
-// ─── Interfaces ─── //
+const BASE_URL = import.meta.env.VITE_DOTNET_URL || 'http://localhost:5091';
 
 export interface PostApi {
   id: number;
@@ -10,7 +6,8 @@ export interface PostApi {
   conteudo: string;
   subtitulo: string;
   slug: string;
-  imagem: string;
+  imagemCapaId: number;
+  imagemCapaUrl?: string; 
   publicadoEm: string | null;
   editorial: string;
   subcategoria?: string;
@@ -72,18 +69,15 @@ export interface EmissoraApi {
   ativa: boolean;
 }
 
-// ─── Image URL Helper ───
 
-export function resolveImageUrl(imagem?: string | null): string {
-  if (!imagem) return '/placeholder.svg';
-  // Already absolute URL
-  if (imagem.startsWith('http://') || imagem.startsWith('https://')) return imagem;
-  // Relative path → prepend base URL
-  const path = imagem.startsWith('/') ? imagem : `/${imagem}`;
-  return `${BASE_URL}${path}`;
+// dotnetApi.ts
+export function resolveImageUrl(url?: string | null, id?: number | null): string {
+  if (url) return url;
+
+  if (id) return `${BASE_URL}/uploads/${id}`; 
+
+  return '/placeholder.svg';
 }
-
-// ─── Posts ─── // Note
 
 export async function fetchPostsPublic(): Promise<PostApi[]> {
   const res = await fetch(`${BASE_URL}/api/posts/public`);
@@ -109,8 +103,6 @@ export async function fetchFilteredPosts(dateFilter: number, orderBy: number): P
   return res.json();
 }
 
-// ─── Temas Editoriais ─── //
-
 export async function fetchAllTemasEditoriais(): Promise<TemaEditorialApi[]> {
   const res = await fetch(`${BASE_URL}/api/tema-editorial`);
   if (!res.ok) throw new Error(`Temas Editoriais API error: ${res.status}`);
@@ -122,8 +114,6 @@ export async function fetchTemaEditorial(id: number): Promise<TemaEditorialApi> 
   if (!res.ok) throw new Error(`Tema Editorial API error: ${res.status}`);
   return res.json();
 }
-
-// ─── Editoriais e Subcategorias ─── //
 
 export async function fetchEditoriais(): Promise<EditorialApi[]> {
   const res = await fetch(`${BASE_URL}/api/editorial/buscarTodos`);
@@ -150,7 +140,6 @@ export async function fetchCidades(): Promise<CidadeApi[]> {
 }
 
 // ─── Emissora ─── //
-
 export async function fetchEmissora(id: number): Promise<EmissoraApi> {
   const res = await fetch(`${BASE_URL}/api/emissora/${id}/buscarPorId`);
   if (!res.ok) throw new Error(`Emissora API error: ${res.status}`);

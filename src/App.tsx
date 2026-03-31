@@ -41,14 +41,14 @@ const App = () => (
                   </StationRoute>
                 }
               />
-              <Route
+              {/* <Route
                 path="/radio89maravilha"
                 element={
                   <StationRoute stationId="radio89maravilha">
                     <Index />
                   </StationRoute>
                 }
-              />
+              /> */}
               <Route
                 path="/gtfnews"
                 element={

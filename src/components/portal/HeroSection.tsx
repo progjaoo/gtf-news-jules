@@ -30,7 +30,7 @@ export function HeroSection({ mainNews, sideNews }: HeroSectionProps) {
           >
             <div className="relative aspect-[16/8] overflow-hidden">
               <img 
-                src={resolveImageUrl(mainNews.imagem)} 
+                src={resolveImageUrl(mainNews.imagemCapaUrl, mainNews.imagemCapaId)} 
                 alt={mainNews.titulo}
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
               />

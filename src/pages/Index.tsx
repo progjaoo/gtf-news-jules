@@ -63,7 +63,7 @@ function HeroCard({ post, size = 'normal' }: { post: PostApi; size?: 'large' | '
         size === 'large' ? 'h-[300px] md:h-[70%]' : 'h-[140px]'
       )}>
         <img
-          src={resolveImageUrl(post.imagem)}
+          src={resolveImageUrl(post.imagemCapaUrl, post.imagemCapaId)}
           alt={post.titulo}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         />

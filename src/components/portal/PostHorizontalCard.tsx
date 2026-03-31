@@ -26,7 +26,7 @@ export function PostHorizontalCard({ post }: PostHorizontalCardProps) {
       {/* Imagem */}
      <div className="sm:w-72 w-full h-48 sm:h-auto sm:min-h-[200px] flex-shrink-0 overflow-hidden">
         <img
-          src={resolveImageUrl(post.imagem)}
+          src={resolveImageUrl(post.imagemCapaUrl, post.imagemCapaId)}
           alt={post.titulo}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />

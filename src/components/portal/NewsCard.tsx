@@ -48,7 +48,7 @@ export function NewsCard({
         {showImage && (
           <div className="w-28 h-20 flex-shrink-0 overflow-hidden rounded">
             <img
-              src={resolveImageUrl(news.imagem)}
+              src={resolveImageUrl(news.imagemCapaUrl, news.imagemCapaId)}
               alt={news.titulo}
               className="w-full h-full object-cover"
             />
@@ -83,7 +83,7 @@ export function NewsCard({
           )}
         >
           <img
-            src={resolveImageUrl(news.imagem)}
+            src={resolveImageUrl(news.imagemCapaUrl, news.imagemCapaId)}
             alt={news.titulo}
             className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
           />

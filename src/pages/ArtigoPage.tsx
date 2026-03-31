@@ -8,6 +8,7 @@ import { MessageCircle, Share2, ChevronRight, Home } from "lucide-react";
 import { useEditorial } from "@/contexts/EditorialContext";
 import { useStation } from "@/contexts/StationContext";
 import { Link } from "react-router-dom";
+import { resolveImageUrl } from "@/services/dotnetApi";
 
 export default function ArtigoPage() {
   const { id } = useParams();
@@ -173,9 +174,9 @@ export default function ArtigoPage() {
             </div>
 
             {/* IMAGEM */}
-            {noticia.imagem && (
+            {noticia.imagemCapaId && (
               <div className="rounded-lg overflow-hidden mb-8">
-                <img src={noticia.imagem} alt={noticia.titulo} className="w-full" />
+                <img src={resolveImageUrl(noticia.imagemCapaUrl, noticia.imagemCapaId)} alt={noticia.titulo} className="w-full" />
               </div>
             )}
 

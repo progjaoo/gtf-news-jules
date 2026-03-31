@@ -9,6 +9,7 @@ import { PostApi, resolveImageUrl } from '@/services/dotnetApi';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useStation } from '@/contexts/StationContext';
 import { useEditorial } from '@/contexts/EditorialContext';
+import { VerMaisButton } from '@/components/portal/VerMaisButton';
 
 function cn(...classes: (string | boolean | undefined)[]) {
   return classes.filter(Boolean).join(' ');
@@ -34,7 +35,7 @@ function HeroCard({ post, size = 'normal' }: { post: PostApi; size?: 'large' | '
         size === 'large' ? 'h-[300px] md:h-[70%]' : 'h-[140px]'
       )}>
         <img
-          src={resolveImageUrl(post.imagem)}
+          src={resolveImageUrl(post.imagemCapaUrl, post.imagemCapaId)}
           alt={post.titulo}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         />
@@ -91,7 +92,7 @@ function Radio88FMContent() {
   const culturaNews = fatoPosts.filter(n => n.editorial === 'Cultura').slice(0, 1);
   const noticiasNews = fatoPosts.filter(n => n.editorial === 'Notícias' || n.editorial === 'Noticias').slice(0, 1);
   const esportesNews = fatoPosts.filter(n => n.editorial === 'Esportes').slice(0, 1);
-
+  const nacionalNews = fatoPosts.filter(n => n.editorial === 'Nacional').slice(0, 1);
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background">
@@ -142,13 +143,14 @@ function Radio88FMContent() {
             </div>
           </div>
           <div>
-            <SectionHeader title="Notícias" editorial="noticias" />
-            <div className="space-y-4">
-              {noticiasNews.map((news) => (
-                <NewsCard key={news.id} news={news} variant="horizontal" showSubtitle={false} />
-              ))}
-            </div>
-          </div>
+            <SectionHeader title="Nacional" editorial="nacional" />
+               <div className="space-y-4">
+                   {nacionalNews.map((news) => (
+                      <NewsCard key={news.id} news={news} variant="horizontal" showSubtitle={false} />
+                     ))}
+                </div>
+                 <VerMaisButton size="medium" label="Ver mais Nacional" onClick={() => navigate('/editorial/4')} />
+                </div>
           <div>
             <SectionHeader title="Esportes" editorial="esportes" />
             <div className="space-y-4">

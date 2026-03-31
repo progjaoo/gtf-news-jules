@@ -32,7 +32,7 @@ function SearchResultCard({ post, stationColor }: { post: PostApi; stationColor:
     >
       <div className="flex-shrink-0 w-[220px] h-[140px] rounded-lg overflow-hidden bg-muted">
         <img
-          src={resolveImageUrl(post.imagem)}
+          src={resolveImageUrl(post.imagemCapaUrl, post.imagemCapaId)}
           alt={post.titulo}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />
