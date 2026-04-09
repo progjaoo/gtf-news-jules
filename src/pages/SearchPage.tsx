@@ -7,6 +7,7 @@ import { Search } from 'lucide-react';
 import { useState } from 'react';
 import { StationSelector } from '@/components/portal/StationSelector';
 import { PostApi, resolveImageUrl } from '@/services/dotnetApi';
+import { buildArticlePath } from '@/lib/routes';
 import logo88 from '@/assets/logoazul.svg';
 import logomaravilha from '@/assets/logomaravilha.svg';
 
@@ -28,7 +29,7 @@ function SearchResultCard({ post, stationColor }: { post: PostApi; stationColor:
   return (
     <article
       className="flex gap-5 py-5 border-b border-border cursor-pointer group"
-      onClick={() => navigate(`/noticia/${post.id}`)}
+      onClick={() => navigate(buildArticlePath(post))}
     >
       <div className="flex-shrink-0 w-[220px] h-[140px] rounded-lg overflow-hidden bg-muted">
         <img
@@ -142,7 +143,6 @@ export default function SearchPage() {
           </form>
         </div>
       </div>
-
       {/* Filtros */}
       <div className="border-b border-border bg-muted/20">
         <div className="container py-4 flex flex-col md:flex-row md:items-center justify-between gap-4">

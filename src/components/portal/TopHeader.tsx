@@ -13,8 +13,8 @@ export function TopHeader() {
   const location = useLocation();
   
   // PASSO 2: Use editorial color when on editorial or article page
-  const isEditorialPage = location.pathname.startsWith('/editorial/');
-  const isArticlePage = location.pathname.startsWith('/noticia/');
+  const isEditorialPage = /^\/editorial\/[^/]+$/.test(location.pathname) || /^\/[^/]+\/editorial\/[^/]+$/.test(location.pathname);
+  const isArticlePage = /^\/noticia\/[^/]+$/.test(location.pathname) || /^\/[^/]+\/[^/]+\/[^/]+$/.test(location.pathname);
   const editorialInfo = getEditorialInfo();
   const activeColor = (isEditorialPage || isArticlePage) && editorialInfo?.corPrimaria
     ? editorialInfo.corPrimaria

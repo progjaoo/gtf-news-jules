@@ -1,42 +1,76 @@
 import React from "react";
-import { useParams } from "react-router-dom";
+import { Navigate, useLocation, useParams } from "react-router-dom";
 import { StickyHeader } from "@/components/portal/StickyHeader";
 import { Footer } from "@/components/portal/Footer";
 import { NewsCard } from "@/components/portal/NewsCard";
-import { usePostById, usePosts } from "@/hooks/useArticles";
-import { MessageCircle, Share2, ChevronRight, Home } from "lucide-react";
+import { usePostById, usePostBySlug, usePosts } from "@/hooks/useArticles";
+import { Share2, ChevronRight, Home, ChevronDown, ChevronUp } from "lucide-react";
 import { useEditorial } from "@/contexts/EditorialContext";
 import { useStation } from "@/contexts/StationContext";
 import { Link } from "react-router-dom";
-import { resolveImageUrl } from "@/services/dotnetApi";
+import { registerPostView, resolveImageUrl } from "@/services/dotnetApi";
+import { buildArticlePath, resolveStationSlug } from "@/lib/routes";
 
 export default function ArtigoPage() {
-  const { id } = useParams();
+  const { id, slug } = useParams();
   const postId = Number(id) || 0;
-  const { data: noticia, isLoading } = usePostById(postId);
+  const [showSummary, setShowSummary] = React.useState(false);
+  const location = useLocation();
+  const { data: noticiaBySlug, isLoading: slugLoading } = usePostBySlug(slug || "");
+  const { data: noticiaById, isLoading: idLoading } = usePostById(postId);
+  const noticia = slug ? noticiaBySlug : noticiaById;
+  const isLoading = slug ? slugLoading : idLoading;
   const { data: allPosts } = usePosts();
   const { allEditorials, setEditorial, editorials } = useEditorial();
-  const { currentStation } = useStation();
+  const { currentStation, setStation } = useStation();
+
+  const normalizeText = (value?: string | null) =>
+    (value || "")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .trim();
+
+  const hasRegisteredView = React.useRef<number | null>(null);
+
+  React.useEffect(() => {
+    if (!noticia?.id || hasRegisteredView.current === noticia.id) return;
+
+    hasRegisteredView.current = noticia.id;
+    registerPostView(noticia.id).catch(() => {
+      hasRegisteredView.current = null;
+    });
+  }, [noticia?.id]);
+
+  React.useEffect(() => {
+    const stationId = noticia
+      ? resolveStationSlug(noticia.emissora, noticia.emissoraSlug)
+      : null;
+
+    if (stationId && (stationId === "radio88fm" || stationId === "fatopopular" || stationId === "gtfnews") && stationId !== currentStation.id) {
+      setStation(stationId);
+    }
+  }, [noticia?.emissora, noticia?.emissoraSlug, currentStation.id, setStation]);
 
   React.useEffect(() => {
     if (noticia?.editorial) {
-      const normalizedName = noticia.editorial.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-      const match = editorials.find(e => {
-        const eName = e.label.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      const normalizedName = normalizeText(noticia.editorial);
+      const match = allEditorials.find(e => {
+        const eName = normalizeText(e.label);
         return eName === normalizedName || eName.startsWith(normalizedName) || normalizedName.startsWith(eName);
       });
       if (match) {
         setEditorial(match.id);
       }
     }
-  }, [noticia?.editorial, editorials, setEditorial]);
+  }, [noticia?.editorial, allEditorials, currentStation.id, setEditorial]);
 
   // Resolve the correct editorial color by matching the editorial name
   const resolveEditorialColor = (editorial?: string, fallbackColor?: string) => {
     if (editorial) {
-      const normalizedName = editorial.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      const normalizedName = normalizeText(editorial);
       const match = allEditorials.find(e => {
-        const eName = e.label.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        const eName = normalizeText(e.label);
         return eName === normalizedName || eName.startsWith(normalizedName) || normalizedName.startsWith(eName);
       });
       if (match) return match.corPrimaria;
@@ -44,7 +78,56 @@ export default function ArtigoPage() {
     return fallbackColor || '#E83C25';
   };
 
-  const relatedNews = (allPosts || []).filter((n) => n.id !== postId).slice(0, 4);
+  const relatedNews = (allPosts || []).filter((n) => n.id !== noticia?.id).slice(0, 4);
+
+  const canonicalPath = noticia ? buildArticlePath(noticia) : null;
+
+  const articleStructure = React.useMemo(() => {
+    const html = noticia?.conteudo?.trim();
+    if (!html || typeof window === "undefined") {
+      return {
+        firstParagraphHtml: html || "",
+        remainingHtml: "",
+        bullets: [] as string[],
+      };
+    }
+
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(`<div>${html}</div>`, "text/html");
+    const container = doc.body.firstElementChild as HTMLDivElement | null;
+
+    if (!container) {
+      return { firstParagraphHtml: html, remainingHtml: "", bullets: [] as string[] };
+    }
+
+    const paragraphs = Array.from(container.querySelectorAll("p"))
+      .map((paragraph) => paragraph.textContent?.replace(/\s+/g, " ").trim() || "")
+      .filter(Boolean);
+
+    const firstParagraph = container.querySelector("p");
+    const firstParagraphHtml = firstParagraph?.outerHTML || "";
+
+    if (firstParagraph) {
+      firstParagraph.remove();
+    }
+
+    const remainingHtml = container.innerHTML.trim();
+    const bullets = paragraphs
+      .slice(1, 5)
+      .map((paragraph) => paragraph.replace(/\s+/g, " ").trim())
+      .filter(Boolean)
+      .map((paragraph) => paragraph.length > 180 ? `${paragraph.slice(0, 177).trim()}...` : paragraph);
+
+    return {
+      firstParagraphHtml,
+      remainingHtml,
+      bullets,
+    };
+  }, [noticia?.conteudo]);
+
+  React.useEffect(() => {
+    setShowSummary(false);
+  }, [noticia?.id]);
 
   if (isLoading) {
     return (
@@ -64,6 +147,14 @@ export default function ArtigoPage() {
         <Footer />
       </div>
     );
+  }
+
+  if (!slug && noticia) {
+    return <Navigate to={canonicalPath || `/noticia/${noticia.id}`} replace />;
+  }
+
+  if (slug && canonicalPath && location.pathname !== canonicalPath) {
+    return <Navigate to={canonicalPath} replace />;
   }
 
   return (
@@ -181,9 +272,44 @@ export default function ArtigoPage() {
             )}
 
             {/* CONTEÚDO */}
-            <div className="prose prose-lg max-w-none">
+            <div className="article-content">
               {noticia.conteudo ? (
-                <div dangerouslySetInnerHTML={{ __html: noticia.conteudo.replace(/\n/g, "<br />") }} />
+                <>
+                  {articleStructure.firstParagraphHtml ? (
+                    <div dangerouslySetInnerHTML={{ __html: articleStructure.firstParagraphHtml }} />
+                  ) : null}
+
+                  {articleStructure.bullets.length > 0 && (
+                    <div className="my-8 rounded-xl border bg-muted/20 p-5">
+                      <div className="flex items-center justify-between gap-4">
+                        <div>
+                          <p className="text-sm font-semibold uppercase tracking-wide text-foreground">Resumo da matéria</p>
+                          <p className="mt-1 text-sm text-muted-foreground">Pontos principais para leitura rápida.</p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setShowSummary((current) => !current)}
+                          className="inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-sm font-medium text-foreground hover:bg-muted"
+                        >
+                          {showSummary ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                          {showSummary ? "Ocultar resumo" : "Ver resumo"}
+                        </button>
+                      </div>
+
+                      {showSummary && (
+                        <ul className="mt-4 list-disc space-y-2 pl-5 text-[1rem] leading-7 text-foreground">
+                          {articleStructure.bullets.map((bullet, index) => (
+                            <li key={`${index}-${bullet.slice(0, 24)}`}>{bullet}</li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  )}
+
+                  {articleStructure.remainingHtml ? (
+                    <div dangerouslySetInnerHTML={{ __html: articleStructure.remainingHtml }} />
+                  ) : null}
+                </>
               ) : (
                 <p className="text-muted-foreground">Conteúdo não disponível.</p>
               )}

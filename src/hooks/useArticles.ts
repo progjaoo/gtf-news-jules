@@ -1,11 +1,58 @@
 import { useQuery } from '@tanstack/react-query';
-import { fetchPostsPublic, fetchPostsByEditorial, searchPosts, fetchFilteredPosts, PostApi } from '@/services/dotnetApi';
+import {
+  fetchPostsPublic,
+  fetchPostsByEditorial,
+  searchPosts,
+  fetchFilteredPosts,
+  fetchDestaques,
+  fetchDestaques88Fm,
+  fetchDestaquesFatoPopular,
+  fetchMaisLidas,
+  fetchPostBySlug,
+  PostApi,
+} from '@/services/dotnetApi';
 
 export function usePosts() {
   return useQuery<PostApi[]>({
     queryKey: ['posts-public'],
     queryFn: fetchPostsPublic,
     staleTime: 1000 * 60 * 5,
+    retry: 1,
+  });
+}
+
+export function useDestaques() {
+  return useQuery<PostApi[]>({
+    queryKey: ['posts-destaques'],
+    queryFn: fetchDestaques,
+    staleTime: 1000 * 60 * 5,
+    retry: 1,
+  });
+}
+
+export function useDestaques88Fm() {
+  return useQuery<PostApi[]>({
+    queryKey: ['posts-destaques', 'radio88fm'],
+    queryFn: fetchDestaques88Fm,
+    staleTime: 1000 * 60 * 5,
+    retry: 1,
+  });
+}
+
+export function useDestaquesFatoPopular() {
+  return useQuery<PostApi[]>({
+    queryKey: ['posts-destaques', 'fatopopular'],
+    queryFn: fetchDestaquesFatoPopular,
+    staleTime: 1000 * 60 * 5,
+    retry: 1,
+  });
+}
+
+export function useMaisLidas(emissoraId?: number, limit = 4, days = 7) {
+  return useQuery<PostApi[]>({
+    queryKey: ['posts-mais-lidas', emissoraId ?? 'all', limit, days],
+    queryFn: () => fetchMaisLidas(emissoraId, limit, days),
+    staleTime: 1000 * 60 * 2,
     retry: 1,
   });
 }
@@ -42,6 +89,16 @@ export function usePostById(id: number) {
       return undefined;
     },
     enabled: id > 0,
+    staleTime: 1000 * 60 * 5,
+    retry: 1,
+  });
+}
+
+export function usePostBySlug(slug: string) {
+  return useQuery<PostApi>({
+    queryKey: ['posts-public', 'slug', slug],
+    queryFn: () => fetchPostBySlug(slug),
+    enabled: slug.length > 0,
     staleTime: 1000 * 60 * 5,
     retry: 1,
   });

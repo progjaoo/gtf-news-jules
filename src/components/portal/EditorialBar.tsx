@@ -24,8 +24,8 @@ export function EditorialBar() {
   const stationHomePath = `/${currentStation.id}`;
 
   // Use editorial color when on an editorial page, otherwise station color
-  const isEditorialPage = location.pathname.startsWith('/editorial/');
-  const isArticlePage = location.pathname.startsWith('/noticia/');
+  const isEditorialPage = /^\/editorial\/[^/]+$/.test(location.pathname) || /^\/[^/]+\/editorial\/[^/]+$/.test(location.pathname);
+  const isArticlePage = /^\/noticia\/[^/]+$/.test(location.pathname) || /^\/[^/]+\/[^/]+\/[^/]+$/.test(location.pathname);
   const editorialInfo = getEditorialInfo();
   const barColor = (isEditorialPage || isArticlePage) && editorialInfo?.corPrimaria
     ? editorialInfo.corPrimaria

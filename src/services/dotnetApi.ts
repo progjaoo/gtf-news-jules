@@ -15,7 +15,9 @@ export interface PostApi {
   usuarioCriacaoId: number;
   usuarioCriacao: string;
   emissora: string;
+  emissoraSlug?: string;
   cidade: string;
+  totalVisualizacoes?: number;
 }
 
 export interface TemaEditorialApi {
@@ -38,6 +40,8 @@ export interface EditorialApi {
   id: number;
   tipoPostagem: string;
   temaEditorialId: number;
+  emissoraId: number;
+  emissoraNome?: string;
   subcategorias?: SubcategoriaApi[];
 }
 
@@ -85,6 +89,53 @@ export async function fetchPostsPublic(): Promise<PostApi[]> {
   return res.json();
 }
 
+export async function fetchDestaques(): Promise<PostApi[]> {
+  const res = await fetch(`${BASE_URL}/api/posts/destaques`);
+  if (!res.ok) throw new Error(`Destaques API error: ${res.status}`);
+  return res.json();
+}
+
+export async function fetchDestaques88Fm(): Promise<PostApi[]> {
+  const res = await fetch(`${BASE_URL}/api/posts/destaques88fm`);
+  if (!res.ok) throw new Error(`Destaques 88 FM API error: ${res.status}`);
+  return res.json();
+}
+
+export async function fetchDestaquesFatoPopular(): Promise<PostApi[]> {
+  const res = await fetch(`${BASE_URL}/api/posts/destaquesFatoPopular`);
+  if (!res.ok) throw new Error(`Destaques Fato Popular API error: ${res.status}`);
+  return res.json();
+}
+
+export async function fetchMaisLidas(emissoraId?: number, limit = 4, days = 7): Promise<PostApi[]> {
+  const params = new URLSearchParams({
+    limit: String(limit),
+    days: String(days),
+  });
+
+  if (emissoraId) {
+    params.set("emissoraId", String(emissoraId));
+  }
+
+  const res = await fetch(`${BASE_URL}/api/posts/mais-lidas?${params.toString()}`);
+  if (!res.ok) throw new Error(`Mais Lidas API error: ${res.status}`);
+  return res.json();
+}
+
+export async function fetchPostBySlug(slug: string): Promise<PostApi> {
+  const res = await fetch(`${BASE_URL}/api/posts/slug/${encodeURIComponent(slug)}`);
+  if (!res.ok) throw new Error(`Post by slug API error: ${res.status}`);
+  return res.json();
+}
+
+export async function registerPostView(postId: number): Promise<void> {
+  const res = await fetch(`${BASE_URL}/api/posts/${postId}/visualizacao`, {
+    method: "POST",
+  });
+
+  if (!res.ok) throw new Error(`Registrar visualização API error: ${res.status}`);
+}
+
 export async function fetchPostsByEditorial(editorialId: number): Promise<PostApi[]> {
   const res = await fetch(`${BASE_URL}/api/posts/editorial/${editorialId}`);
   if (!res.ok) throw new Error(`Posts Editorial API error: ${res.status}`);
@@ -118,6 +169,12 @@ export async function fetchTemaEditorial(id: number): Promise<TemaEditorialApi> 
 export async function fetchEditoriais(): Promise<EditorialApi[]> {
   const res = await fetch(`${BASE_URL}/api/editorial/buscarTodos`);
   if (!res.ok) throw new Error(`Editoriais API error: ${res.status}`);
+  return res.json();
+}
+
+export async function fetchEditoriaisByEmissora(emissoraId: number): Promise<EditorialApi[]> {
+  const res = await fetch(`${BASE_URL}/api/editorial/emissora/${emissoraId}/buscarTodos`);
+  if (!res.ok) throw new Error(`Editoriais por emissora API error: ${res.status}`);
   return res.json();
 }
 

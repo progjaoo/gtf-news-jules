@@ -6,12 +6,13 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import {
-  fetchEditoriais, fetchSubcategorias, fetchAllTemasEditoriais,
+  fetchEditoriaisByEmissora, fetchSubcategorias,
   fetchRegioes, fetchCidades
 } from '@/services/dotnetApi';
 
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
+import { useStation, StationType } from '@/contexts/StationContext';
 
 /* --------------------------------------------------------------
    INTERFACE BASE DO MENU – será usada quando vier da API
@@ -87,20 +88,23 @@ function MenuItemComponent({ item, level = 0 }: { item: MenuItem; level?: number
 export function MainDrawer() {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+  const { currentStation } = useStation();
+  const stationApiIds: Record<StationType, number> = {
+    radio88fm: 1,
+    gtfnews: 4,
+    fatopopular: 5,
+  };
+  const currentStationApiId = currentStation.apiData?.id || stationApiIds[currentStation.id as StationType];
 
   const { data: editoriais } = useQuery({
-    queryKey: ['editoriais'],
-    queryFn: fetchEditoriais
+    queryKey: ['editoriais', 'drawer', currentStationApiId],
+    queryFn: () => fetchEditoriaisByEmissora(currentStationApiId),
+    enabled: !!currentStationApiId,
   });
 
   const { data: subcategorias } = useQuery({
     queryKey: ['subcategorias'],
     queryFn: fetchSubcategorias
-  });
-
-  const { data: temas } = useQuery({
-    queryKey: ['temas-editoriais'],
-    queryFn: fetchAllTemasEditoriais
   });
 
   const { data: regioes } = useQuery({
@@ -120,34 +124,41 @@ export function MainDrawer() {
         label: 'Início',
         icon: <Home size={18} />,
         onClick: () => {
-          navigate('/');
+          navigate(currentStation.homePath);
           setOpen(false);
         }
       }
     ];
 
-    if (editoriais && temas) {
+    if (editoriais) {
       const editoriasMenu: MenuItem = {
         id: 'editorias',
         label: 'Editorias',
         icon: <Newspaper size={18} />,
         children: editoriais.map(ed => {
-          const tema = temas.find(t => t.id === ed.temaEditorialId);
-          // Try to get subcategories from the editorial object first, then fallback to global list
           const edSubcats = ed.subcategorias || subcategorias?.filter(s => s.editorialId === ed.id) || [];
+          const normalizedName = ed.tipoPostagem
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .trim();
 
           return {
             id: `ed-${ed.id}`,
-            label: tema?.descricao || ed.tipoPostagem,
+            label: ed.tipoPostagem,
             onClick: () => {
-              navigate(`/editorial/${ed.id}`);
+              if (currentStation.id === 'radio88fm' && normalizedName === 'fato popular') {
+                navigate('/fatopopular');
+              } else {
+                navigate(`${currentStation.homePath}/editorial/${ed.id}`);
+              }
               setOpen(false);
             },
             children: edSubcats.map(sub => ({
               id: `sub-${sub.id}`,
               label: sub.nome,
               onClick: () => {
-                navigate(`/editorial/${ed.id}?sub=${sub.id}`);
+                navigate(`${currentStation.homePath}/editorial/${ed.id}?sub=${sub.id}`);
                 setOpen(false);
               }
             }))
@@ -200,7 +211,7 @@ export function MainDrawer() {
     );
 
     return baseItems;
-  }, [editoriais, subcategorias, temas, regioes, cidades, navigate]);
+  }, [editoriais, subcategorias, regioes, cidades, navigate, currentStation]);
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>

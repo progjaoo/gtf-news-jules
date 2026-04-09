@@ -2,6 +2,7 @@ import React from 'react';
 import { NewsCard } from './NewsCard';
 import { PostApi, resolveImageUrl } from '@/services/dotnetApi';
 import { useNavigate } from 'react-router-dom';
+import { buildArticlePath } from '@/lib/routes';
 
 interface HeroSectionProps {
   mainNews?: PostApi;
@@ -26,7 +27,7 @@ export function HeroSection({ mainNews, sideNews }: HeroSectionProps) {
         <div className="lg:col-span-8 ml-10">
           <article 
             className="cursor-pointer group bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden h-full flex flex-col"
-            onClick={() => navigate(`/noticia/${mainNews.id}`)}
+            onClick={() => navigate(buildArticlePath(mainNews))}
           >
             <div className="relative aspect-[16/8] overflow-hidden">
               <img 

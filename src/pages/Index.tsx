@@ -8,20 +8,44 @@ import { StickyHeader } from '@/components/portal/StickyHeader';
 import { NewsCard } from '@/components/portal/NewsCard';
 import { VerMaisButton } from '@/components/portal/VerMaisButton';
 import { useNavigate } from 'react-router-dom';
-import { usePosts, usePostsByEditorial } from '@/hooks/useArticles';
+import { useDestaquesFatoPopular, useMaisLidas, usePosts, usePostsByEditorial } from '@/hooks/useArticles';
 import { useEditorial } from '@/contexts/EditorialContext';
 import { PostApi, resolveImageUrl } from '@/services/dotnetApi';
 import { cn } from '@/lib/utils';
+import { buildArticlePath } from '@/lib/routes';
 
 function PortalContent() {
   const { data: posts, isLoading } = usePosts();
+  const { data: destaquesFatoPopular } = useDestaquesFatoPopular();
+  const { data: maisLidas } = useMaisLidas(5, 4, 7);
   const navigate = useNavigate();
   
   const allNews = posts || [];
   
-  const mainNews = allNews[0];
-  const sideNews = allNews.slice(1, 10);
-  const gridNews = allNews.slice(2, 8);
+  const heroNews = (destaquesFatoPopular && destaquesFatoPopular.length > 0 ? destaquesFatoPopular : allNews).slice(0, 5);
+  const featuredIds = new Set(heroNews.map((post) => post.id));
+  const remainingNews = allNews.filter((post) => !featuredIds.has(post.id));
+
+  const mainNews = heroNews[0];
+  const mostReadNews = (maisLidas || []).filter((post) => post.id !== mainNews?.id);
+  const featuredFallback = heroNews.slice(1, 5).filter((post) => post.id !== mainNews?.id);
+  const sideNews = [...mostReadNews];
+
+  for (const post of featuredFallback) {
+    if (sideNews.length >= 4) break;
+    if (!sideNews.some((item) => item.id === post.id)) {
+      sideNews.push(post);
+    }
+  }
+
+  for (const post of remainingNews) {
+    if (sideNews.length >= 4) break;
+    if (!sideNews.some((item) => item.id === post.id) && post.id !== mainNews?.id) {
+      sideNews.push(post);
+    }
+  }
+
+  const gridNews = remainingNews.slice(0, 6);
 
 
   // Buscar posts da Rádio 88 FM (Trigger)
@@ -56,7 +80,7 @@ function HeroCard({ post, size = 'normal' }: { post: PostApi; size?: 'large' | '
         'flex flex-col overflow-hidden rounded-lg cursor-pointer group shadow-sm bg-white',
         size === 'large' ? 'md:col-span-1 md:row-span-2' : ''
       )}
-      onClick={() => navigate(`/noticia/${post.id}`)}
+      onClick={() => navigate(buildArticlePath(post))}
     >
       <div className={cn(
         'relative w-full overflow-hidden',
@@ -108,7 +132,7 @@ function HeroCard({ post, size = 'normal' }: { post: PostApi; size?: 'large' | '
 
       {/* Secondary Grid */}
       <section className="container pb-8">
-        <NewsGrid news={allNews.slice(8)} columns={3} />
+        <NewsGrid news={remainingNews.slice(6)} columns={3} />
       </section>
 
       {/* Negócios Section */}

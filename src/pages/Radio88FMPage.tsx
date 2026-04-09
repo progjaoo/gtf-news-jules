@@ -10,6 +10,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useStation } from '@/contexts/StationContext';
 import { useEditorial } from '@/contexts/EditorialContext';
 import { VerMaisButton } from '@/components/portal/VerMaisButton';
+import { buildArticlePath } from '@/lib/routes';
 
 function cn(...classes: (string | boolean | undefined)[]) {
   return classes.filter(Boolean).join(' ');
@@ -28,7 +29,7 @@ function HeroCard({ post, size = 'normal' }: { post: PostApi; size?: 'large' | '
         'flex flex-col overflow-hidden rounded-lg cursor-pointer group shadow-sm bg-white',
         size === 'large' ? 'md:col-span-1 md:row-span-2' : ''
       )}
-      onClick={() => navigate(`/noticia/${post.id}`)}
+      onClick={() => navigate(buildArticlePath(post))}
     >
       <div className={cn(
         'relative w-full overflow-hidden',

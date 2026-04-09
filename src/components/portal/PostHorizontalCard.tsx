@@ -1,10 +1,9 @@
 import React from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { PostApi, resolveImageUrl } from '@/services/dotnetApi';
-import { Button } from '@/components/ui/button';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { usePostById } from '@/hooks/useArticles';
+import { buildArticlePath } from '@/lib/routes';
 
 interface PostHorizontalCardProps {
   post: PostApi;
@@ -21,7 +20,7 @@ export function PostHorizontalCard({ post }: PostHorizontalCardProps) {
   return (
     <article
       className="flex flex-col sm:flex-row bg-card rounded-lg overflow-hidden border border-border shadow-sm hover:shadow-md transition-shadow duration-200 group cursor-pointer"
-      onClick={() => navigate(`/noticia/${post.id}`)}
+      onClick={() => navigate(buildArticlePath(post))}
     >
       {/* Imagem */}
      <div className="sm:w-72 w-full h-48 sm:h-auto sm:min-h-[200px] flex-shrink-0 overflow-hidden">
@@ -41,24 +40,12 @@ export function PostHorizontalCard({ post }: PostHorizontalCardProps) {
           <h3 className="text-[1.450rem] font-bold text-foreground leading-tight group-hover:text-primary transition-colors duration-200 line-clamp-2">
             {post.titulo}
           </h3>
-          <p className="text-[1.0rem] text-muted-foreground leading-relaxed line-clamp-3">
-            {post.subtitulo || post.conteudo}
-          </p>
+          {post.subtitulo && (
+            <p className="text-[1.0rem] text-muted-foreground leading-relaxed line-clamp-3">
+              {post.subtitulo}
+            </p>
+          )}
         </div>
-
-        {/* <div className="flex justify-end">
-          
-          <Button
-            variant="default"
-            size="sm"
-            onClick={(e) => {
-              e.stopPropagation();
-              navigate(`/noticia/${post.id}`);
-            }}
-          >
-            Ler Mais
-          </Button>
-        </div> */}
       </div>
     </article>
   );

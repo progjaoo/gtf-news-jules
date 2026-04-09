@@ -2,6 +2,7 @@ import React from "react";
 import { cn } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
 import { PostApi, resolveImageUrl } from "@/services/dotnetApi";
+import { buildArticlePath } from "@/lib/routes";
 
 // Keep NewsItem as alias for backward compat
 export type NewsItem = PostApi;
@@ -24,7 +25,7 @@ export function NewsCard({
   const navigate = useNavigate();
 
   const openArticle = () => {
-    navigate(`/noticia/${news.id}`);
+    navigate(buildArticlePath(news));
   };
 
   const isSmall = variant === "small";

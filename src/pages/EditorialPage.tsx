@@ -7,13 +7,15 @@ import { PostHorizontalCard } from '@/components/portal/PostHorizontalCard';
 import { SectionHeader } from '@/components/portal/SectionHeader';
 import { usePostsByEditorial } from '@/hooks/useArticles';
 import { useEditorial, EditorialType } from '@/contexts/EditorialContext';
+import { useStation, StationType } from '@/contexts/StationContext';
 import { Skeleton } from '@/components/ui/skeleton';
 import { AlertCircle } from 'lucide-react';
 
 export default function EditorialPage() {
-  const { editorialId } = useParams<{ editorialId: string }>();
+  const { editorialId, stationSlug } = useParams<{ editorialId: string; stationSlug?: string }>();
   const numericId = Number(editorialId) || 1;
   const { editorials, setEditorial, getEditorialByApiId } = useEditorial();
+  const { setStation } = useStation();
 
   const { data: posts, isLoading, isError } = usePostsByEditorial(numericId);
 
@@ -26,6 +28,12 @@ export default function EditorialPage() {
       setEditorial(editorialInfo.id);
     }
   }, [editorialInfo, setEditorial]);
+
+  React.useEffect(() => {
+    if (stationSlug === 'radio88fm' || stationSlug === 'fatopopular' || stationSlug === 'gtfnews') {
+      setStation(stationSlug as StationType);
+    }
+  }, [setStation, stationSlug]);
 
   const editorialLabel = editorialInfo?.label || 'EDITORIAL';
   const editorialType = (editorialInfo?.id || 'noticias') as EditorialType;

@@ -1,92 +1,68 @@
-import React, { createContext, useContext, useState, ReactNode, useMemo } from 'react';
+import React, { createContext, useContext, useEffect, useMemo, useState, ReactNode } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { fetchAllTemasEditoriais, TemaEditorialApi } from '@/services/dotnetApi';
+import {
+  fetchAllTemasEditoriais,
+  fetchEditoriais,
+  fetchEditoriaisByEmissora,
+  TemaEditorialApi,
+  EditorialApi,
+} from '@/services/dotnetApi';
 import { useStation, StationType } from '@/contexts/StationContext';
 
-export type EditorialType = 
-  | 'noticias' 
-  | 'esportes' 
-  | 'negocios' 
-  | 'nacional' 
-  | 'inovacao' 
-  | 'cultura' 
-  | 'servicos'
-  | 'receitas'
-  | 'musica'
-  | 'enquete'
-  | 'debates'
-  | 'fatopopular';
+export type EditorialType = string;
 
-interface EditorialInfo {
+export interface EditorialInfo {
   id: EditorialType;
-  apiId: number; // ID na API para requisições
+  apiId: number;
   label: string;
   color: string;
   corPrimaria: string;
   corSecundaria: string;
   corFonte: string;
   subtopico?: string;
-  isLink?: boolean; // se true, navega para outra rota ao invés de /editorial/:id
+  isLink?: boolean;
   linkTo?: string;
 }
 
-// Mapeamento descrição API → EditorialType
-const descToType: Record<string, EditorialType> = {
-  'Noticias': 'noticias',
-  'Esportes': 'esportes',
-  'Negocios': 'negocios',
-  'Nacional': 'nacional',
-  'Inovacao': 'inovacao',
-  'Cultura': 'cultura',
-  'Servicos': 'servicos',
-  'Receitas': 'receitas',
-  'Musica': 'musica',
-  'Enquete': 'enquete',
-  'Debates': 'debates',
+const stationApiIds: Record<StationType, number> = {
+  radio88fm: 1,
+  gtfnews: 4,
+  fatopopular: 5,
 };
 
-// Editoriais do Fato Popular (portal de notícias)
-const fatoPopularEditorials: EditorialInfo[] = [
-  { id: 'noticias', apiId: 1, label: 'NOTÍCIAS', color: 'bg-editorial-noticias', corPrimaria: '#E83C25', corSecundaria: '#E83C25', corFonte: '#FFFFFF' },
-  { id: 'esportes', apiId: 2, label: 'ESPORTES', color: 'bg-editorial-esportes', corPrimaria: '#06AA48', corSecundaria: '#06AA48', corFonte: '#FFFFFF' },
-  { id: 'negocios', apiId: 3, label: 'NEGÓCIOS', color: 'bg-editorial-negocios', corPrimaria: '#FF8000', corSecundaria: '#FF8000', corFonte: '#FFFFFF' },
-  { id: 'nacional', apiId: 4, label: 'NACIONAL', color: 'bg-editorial-nacional', corPrimaria: '#000000', corSecundaria: '#000000', corFonte: '#FFFFFF' },
-  { id: 'inovacao', apiId: 5, label: 'INOVAÇÃO', color: 'bg-editorial-inovacao', corPrimaria: '#42CF00', corSecundaria: '#42CF00', corFonte: '#FFFFFF' },
-  { id: 'cultura', apiId: 6, label: 'CULTURA', color: 'bg-editorial-cultura', corPrimaria: '#038CE4', corSecundaria: '#038CE4', corFonte: '#FFFFFF' },
-  { id: 'servicos', apiId: 7, label: 'SERVIÇOS', color: 'bg-editorial-servicos', corPrimaria: '#FEC508', corSecundaria: '#FEC508', corFonte: '#FFFFFF' },
-];
+function normalizeText(value?: string | null) {
+  return (value || '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .trim();
+}
 
-// Editoriais da Rádio 88 FM
-const radio88fmEditorials: EditorialInfo[] = [
-  { id: 'enquete', apiId: 11, label: 'ENQUETES', color: 'bg-editorial-noticias', corPrimaria: '#E83C25', corSecundaria: '#E83C25', corFonte: '#FFFFFF' },
-  { id: 'debates', apiId: 12, label: 'DEBATES', color: 'bg-editorial-negocios', corPrimaria: '#FF8000', corSecundaria: '#FF8000', corFonte: '#FFFFFF' },
-  { id: 'musica', apiId: 10, label: 'MÚSICA', color: 'bg-editorial-cultura', corPrimaria: '#038CE4', corSecundaria: '#038CE4', corFonte: '#FFFFFF' },
-  { id: 'fatopopular', apiId: 0, label: 'FATO POPULAR', color: 'bg-editorial-nacional', corPrimaria: '#132D52', corSecundaria: '#132D52', corFonte: '#FFFFFF', isLink: true, linkTo: '/fatopopular' },
-  { id: 'receitas', apiId: 9, label: 'RECEITAS', color: 'bg-editorial-esportes', corPrimaria: '#06AA48', corSecundaria: '#06AA48', corFonte: '#FFFFFF' },
-];
+function slugifyEditorialId(value?: string | null) {
+  const normalized = normalizeText(value);
+  return normalized.replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || 'noticias';
+}
 
-// Mapeamento de quais editoriais cada station usa
-const stationEditorialSets: Record<StationType, EditorialInfo[]> = {
-  radio88fm: radio88fmEditorials,
-  fatopopular: fatoPopularEditorials,
-  radio89maravilha: fatoPopularEditorials, // fallback
-  gtfnews: fatoPopularEditorials, // fallback
-};
+function mapEditorial(
+  editorial: EditorialApi,
+  themesById: Map<number, TemaEditorialApi>,
+  currentStationId: StationType,
+): EditorialInfo {
+  const theme = themesById.get(editorial.temaEditorialId);
+  const normalizedName = normalizeText(editorial.tipoPostagem);
+  const isFatoPopularLink = currentStationId === 'radio88fm' && normalizedName === 'fato popular';
 
-function mapApiToEditorials(apiData: TemaEditorialApi[], stationId: StationType): EditorialInfo[] {
-  const stationSet = stationEditorialSets[stationId];
-  return stationSet.map((fallback) => {
-    const apiMatch = apiData.find((t) => descToType[t.descricao] === fallback.id);
-    if (apiMatch) {
-      return {
-        ...fallback,
-        corPrimaria: apiMatch.corPrimaria,
-        corSecundaria: apiMatch.corSecundaria,
-        corFonte: apiMatch.corFonte,
-      };
-    }
-    return fallback;
-  });
+  return {
+    id: slugifyEditorialId(editorial.tipoPostagem),
+    apiId: editorial.id,
+    label: editorial.tipoPostagem.toUpperCase(),
+    color: '',
+    corPrimaria: theme?.corPrimaria || '#E83C25',
+    corSecundaria: theme?.corSecundaria || '#E83C25',
+    corFonte: theme?.corFonte || '#FFFFFF',
+    isLink: isFatoPopularLink,
+    linkTo: isFatoPopularLink ? '/fatopopular' : undefined,
+  };
 }
 
 interface EditorialContextType {
@@ -108,21 +84,58 @@ export function EditorialProvider({ children }: { children: ReactNode }) {
   const [currentEditorial, setCurrentEditorial] = useState<EditorialType>('noticias');
   const { currentStation } = useStation();
 
+  const stationId = currentStation.id as StationType;
+  const currentStationApiId = currentStation.apiData?.id || stationApiIds[stationId];
+
   const { data: apiEditorials } = useQuery({
+    queryKey: ['editoriais', 'all'],
+    queryFn: fetchEditoriais,
+    staleTime: 1000 * 60 * 30,
+    retry: 1,
+  });
+
+  const { data: stationEditorialsApi } = useQuery({
+    queryKey: ['editoriais', 'emissora', currentStationApiId],
+    queryFn: () => fetchEditoriaisByEmissora(currentStationApiId),
+    enabled: !!currentStationApiId,
+    staleTime: 1000 * 60 * 10,
+    retry: 1,
+  });
+
+  const { data: apiThemes } = useQuery({
     queryKey: ['temas-editoriais'],
     queryFn: fetchAllTemasEditoriais,
     staleTime: 1000 * 60 * 30,
     retry: 1,
   });
 
-  const stationId = currentStation.id as StationType;
-  const fallback = stationEditorialSets[stationId] || fatoPopularEditorials;
-  const editorials = apiEditorials ? mapApiToEditorials(apiEditorials, stationId) : fallback;
+  const themesById = useMemo(
+    () => new Map((apiThemes || []).map((theme) => [theme.id, theme])),
+    [apiThemes]
+  );
+
+  const editorials = useMemo(
+    () => (stationEditorialsApi || []).map((editorial) => mapEditorial(editorial, themesById, stationId)),
+    [stationEditorialsApi, themesById, stationId]
+  );
+
+  const allEditorials = useMemo(
+    () => (apiEditorials || []).map((editorial) => mapEditorial(editorial, themesById, stationId)),
+    [apiEditorials, themesById, stationId]
+  );
+
+  useEffect(() => {
+    if (!editorials.length) return;
+
+    const exists = editorials.some((editorial) => editorial.id === currentEditorial);
+    if (!exists) {
+      setCurrentEditorial(editorials[0].id);
+    }
+  }, [editorials, currentEditorial]);
 
   const setEditorial = (editorial: EditorialType) => {
     setCurrentEditorial(editorial);
-    // Apply editorial color as CSS variable for dynamic theming
-    const info = editorials.find(e => e.id === editorial);
+    const info = allEditorials.find((item) => item.id === editorial);
     if (info?.corPrimaria) {
       document.documentElement.style.setProperty('--editorial-active-color', info.corPrimaria);
     }
@@ -131,61 +144,41 @@ export function EditorialProvider({ children }: { children: ReactNode }) {
   const getEditorialClass = () => `editorial-${currentEditorial}`;
 
   const getEditorialLabel = () => {
-    const info = editorials.find(e => e.id === currentEditorial);
+    const info = editorials.find((item) => item.id === currentEditorial);
     return info?.label || 'NOTÍCIAS';
   };
 
-  const getEditorialInfo = () => editorials.find(e => e.id === currentEditorial);
-
-  const allEditorialsList = useMemo(() => {
-    const base = [...fatoPopularEditorials, ...radio88fmEditorials];
-    if (!apiEditorials) return base;
-
-    return base.map(fallback => {
-      const apiMatch = apiEditorials.find(t => descToType[t.descricao] === fallback.id);
-      if (apiMatch) {
-        return {
-          ...fallback,
-          corPrimaria: apiMatch.corPrimaria,
-          corSecundaria: apiMatch.corSecundaria,
-          corFonte: apiMatch.corFonte,
-        };
-      }
-      return fallback;
-    });
-  }, [apiEditorials]);
+  const getEditorialInfo = () => editorials.find((item) => item.id === currentEditorial);
 
   const getEditorialColor = (type: EditorialType) => {
-    const info = allEditorialsList.find(e => e.id === type);
+    const info = allEditorials.find((item) => item.id === type);
     return info?.corPrimaria || '#E83C25';
   };
 
   const getEditorialByApiId = (apiId: number) => {
-    return allEditorialsList.find(e => e.apiId === apiId);
+    return allEditorials.find((item) => item.apiId === apiId);
   };
 
   const resolveEditorialColor = (editorialName?: string, fallbackColor?: string) => {
     if (editorialName) {
-      const normalizedName = editorialName.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-      const match = allEditorialsList.find(e => {
-        const eName = e.label.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-        return eName === normalizedName || eName.startsWith(normalizedName) || normalizedName.startsWith(eName);
-      });
+      const normalizedName = normalizeText(editorialName);
+      const match = allEditorials.find((item) => normalizeText(item.label) === normalizedName);
       if (match) return match.corPrimaria;
     }
-    return fallbackColor || '#038CE4';
+
+    return fallbackColor || currentStation.color || '#038CE4';
   };
 
   return (
-    <EditorialContext.Provider 
-      value={{ 
-        currentEditorial, 
-        setEditorial, 
-        getEditorialClass, 
+    <EditorialContext.Provider
+      value={{
+        currentEditorial,
+        setEditorial,
+        getEditorialClass,
         getEditorialLabel,
         getEditorialInfo,
         editorials,
-        allEditorials: allEditorialsList,
+        allEditorials,
         getEditorialColor,
         getEditorialByApiId,
         resolveEditorialColor,

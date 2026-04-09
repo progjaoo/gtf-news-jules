@@ -58,7 +58,9 @@ const App = () => (
                 }
               />
               <Route path="/editorial/:editorialId" element={<EditorialPage />} />
+              <Route path="/:stationSlug/editorial/:editorialId" element={<EditorialPage />} />
               <Route path="/busca" element={<SearchPage />} />
+              <Route path="/:stationSlug/:editorialSlug/:slug" element={<ArtigoPage />} />
               <Route path="/noticia/:id" element={<ArtigoPage />} />
               <Route path="*" element={<NotFound />} />
             </Routes>

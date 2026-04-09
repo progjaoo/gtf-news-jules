@@ -3,6 +3,8 @@ import { Search, X, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSearchPosts } from "@/hooks/useArticles";
 import { useNavigate } from "react-router-dom";
+import { PostApi } from "@/services/dotnetApi";
+import { buildArticlePath } from "@/lib/routes";
 
 export function SearchBox() {
   const [open, setOpen] = useState(false);
@@ -33,8 +35,8 @@ export function SearchBox() {
     setQuery("");
   };
 
-  const openArticle = (id: number) => {
-    navigate(`/noticia/${id}`);
+  const openArticle = (post: PostApi) => {
+    navigate(buildArticlePath(post));
     closeSearch();
   };
 
@@ -87,7 +89,7 @@ export function SearchBox() {
               {results.slice(0, 5).map((post) => (
                 <button
                   key={post.id}
-                  onClick={() => openArticle(post.id)}
+                  onClick={() => openArticle(post)}
                   className="w-full text-left px-4 py-3 hover:bg-muted transition-colors border-b border-border last:border-0"
                 >
                   <div className="flex items-center gap-2 mb-1">

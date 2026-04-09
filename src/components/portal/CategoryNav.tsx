@@ -1,10 +1,12 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useEditorial } from '@/contexts/EditorialContext';
+import { useStation } from '@/contexts/StationContext';
 import { cn } from '@/lib/utils';
 
 export function CategoryNav() {
   const { currentEditorial, setEditorial, editorials } = useEditorial();
+  const { currentStation } = useStation();
   const navigate = useNavigate();
 
   const handleClick = (editorial: typeof editorials[0]) => {
@@ -14,7 +16,7 @@ export function CategoryNav() {
       return;
     }
     setEditorial(editorial.id);
-    navigate(`/editorial/${editorial.apiId}`);
+    navigate(`${currentStation.homePath}/editorial/${editorial.apiId}`);
   };
 
   return (

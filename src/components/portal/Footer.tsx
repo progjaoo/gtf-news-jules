@@ -9,7 +9,11 @@ export function Footer() {
   const location = useLocation();
 
   // Determine footer color: editorial color if on editorial/article page, else station color
-  const isEditorialRoute = location.pathname.startsWith('/editorial/') || location.pathname.startsWith('/noticia/');
+  const isEditorialRoute =
+    /^\/editorial\/[^/]+$/.test(location.pathname) ||
+    /^\/[^/]+\/editorial\/[^/]+$/.test(location.pathname) ||
+    /^\/noticia\/[^/]+$/.test(location.pathname) ||
+    /^\/[^/]+\/[^/]+\/[^/]+$/.test(location.pathname);
   const editorialInfo = getEditorialInfo();
   const footerColor = isEditorialRoute && editorialInfo?.corPrimaria
     ? editorialInfo.corPrimaria
