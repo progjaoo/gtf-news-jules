@@ -337,6 +337,11 @@
     @apply text-[1.0625rem] leading-8 text-foreground;
   }
 
+  .article-content p:empty,
+  .article-content p:has(br:only-child) {
+    @apply min-h-[1.75rem];
+  }
+
   .article-content h1,
   .article-content h2,
   .article-content h3 {
@@ -399,6 +404,27 @@
   .article-content img,
   .article-content .article-inline-image {
     @apply my-8 h-auto w-full rounded-xl;
+  }
+
+  .article-content .article-figure {
+    @apply my-8;
+  }
+
+  .article-content .article-figure img,
+  .article-content .article-figure .article-inline-image {
+    @apply my-0 w-full rounded-xl;
+  }
+
+  .article-content .article-figure-caption {
+    @apply mt-3 text-sm leading-5 text-muted-foreground;
+  }
+
+  .article-content .article-figure-text {
+    @apply text-muted-foreground;
+  }
+
+  .article-content .article-figure-credit {
+    @apply font-medium text-foreground/80;
   }
 
   .article-content iframe {

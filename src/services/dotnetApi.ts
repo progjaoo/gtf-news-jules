@@ -78,7 +78,7 @@ export interface EmissoraApi {
 export function resolveImageUrl(url?: string | null, id?: number | null): string {
   if (url) return url;
 
-  if (id) return `${BASE_URL}/uploads/${id}`; 
+  if (id) return `${BASE_URL}/api/media/${id}/download`;
 
   return '/placeholder.svg';
 }

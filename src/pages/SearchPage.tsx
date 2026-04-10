@@ -4,7 +4,7 @@ import { useSearchPosts, useFilteredPosts } from '@/hooks/useArticles';
 import { useStation } from '@/contexts/StationContext';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Search } from 'lucide-react';
-import { useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { StationSelector } from '@/components/portal/StationSelector';
 import { PostApi, resolveImageUrl } from '@/services/dotnetApi';
 import { buildArticlePath } from '@/lib/routes';
@@ -17,6 +17,42 @@ const stationLogos: Record<string, string> = {
   'gtfnews': logo88,
   'fatopopular': logo88,
 };
+
+function filterPostsByDate(posts: PostApi[], dateFilter: number) {
+  if (!dateFilter) return posts;
+
+  const now = Date.now();
+  const getStartDate = () => {
+    switch (dateFilter) {
+      case 1:
+        return now - 60 * 60 * 1000;
+      case 2:
+        return now - 7 * 24 * 60 * 60 * 1000;
+      case 3:
+        return now - 30 * 24 * 60 * 60 * 1000;
+      case 4:
+        return now - 365 * 24 * 60 * 60 * 1000;
+      default:
+        return 0;
+    }
+  };
+
+  const startDate = getStartDate();
+  return posts.filter((post) => {
+    if (!post.publicadoEm) return false;
+    const publishedAt = new Date(post.publicadoEm).getTime();
+    return Number.isFinite(publishedAt) && publishedAt >= startDate;
+  });
+}
+
+function sortPosts(posts: PostApi[], orderBy: number) {
+  return [...posts].sort((a, b) => {
+    const aDate = a.publicadoEm ? new Date(a.publicadoEm).getTime() : 0;
+    const bDate = b.publicadoEm ? new Date(b.publicadoEm).getTime() : 0;
+
+    return orderBy === 1 ? aDate - bDate : bDate - aDate;
+  });
+}
 
 function SearchResultCard({ post, stationColor }: { post: PostApi; stationColor: string }) {
   const navigate = useNavigate();
@@ -72,12 +108,22 @@ export default function SearchPage() {
 
   const { data: searchResults, isLoading: isSearchLoading } = useSearchPosts(q);
   const { data: filteredResults, isLoading: isFilterLoading } = useFilteredPosts(dateFilter, orderBy);
+  const results = useMemo(() => {
+    if (q) {
+      const searchedPosts = searchResults ?? [];
+      return sortPosts(filterPostsByDate(searchedPosts, dateFilter), orderBy);
+    }
 
-  const results = q ? searchResults : filteredResults;
+    return filteredResults ?? [];
+  }, [q, searchResults, filteredResults, dateFilter, orderBy]);
   const isLoading = q ? isSearchLoading : isFilterLoading;
 
   const { currentStation } = useStation();
   const logoSrc = stationLogos[currentStation.id];
+
+  useEffect(() => {
+    setInputValue(q);
+  }, [q]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

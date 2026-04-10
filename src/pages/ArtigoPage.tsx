@@ -31,6 +31,14 @@ export default function ArtigoPage() {
       .replace(/[\u0300-\u036f]/g, "")
       .trim();
 
+  const preserveEditorialSpacing = React.useCallback((html?: string | null) => {
+    if (!html) return "";
+
+    return html
+      .replace(/<p>(?:\s|&nbsp;|<br\s*\/?>|<br class="ProseMirror-trailingBreak">)*<\/p>/gi, "<p>&nbsp;</p>")
+      .replace(/<p>\s*<\/p>/gi, "<p>&nbsp;</p>");
+  }, []);
+
   const hasRegisteredView = React.useRef<number | null>(null);
 
   React.useEffect(() => {
@@ -83,7 +91,7 @@ export default function ArtigoPage() {
   const canonicalPath = noticia ? buildArticlePath(noticia) : null;
 
   const articleStructure = React.useMemo(() => {
-    const html = noticia?.conteudo?.trim();
+    const html = preserveEditorialSpacing(noticia?.conteudo?.trim());
     if (!html || typeof window === "undefined") {
       return {
         firstParagraphHtml: html || "",
@@ -123,7 +131,7 @@ export default function ArtigoPage() {
       remainingHtml,
       bullets,
     };
-  }, [noticia?.conteudo]);
+  }, [noticia?.conteudo, preserveEditorialSpacing]);
 
   React.useEffect(() => {
     setShowSummary(false);
@@ -263,13 +271,6 @@ export default function ArtigoPage() {
                 <Share2 className="w-5 h-5 text-muted-foreground" />
               </button>
             </div>
-
-            {/* IMAGEM */}
-            {noticia.imagemCapaId && (
-              <div className="rounded-lg overflow-hidden mb-8">
-                <img src={resolveImageUrl(noticia.imagemCapaUrl, noticia.imagemCapaId)} alt={noticia.titulo} className="w-full" />
-              </div>
-            )}
 
             {/* CONTEÚDO */}
             <div className="article-content">
