@@ -19,19 +19,17 @@ export function PostHorizontalCard({ post }: PostHorizontalCardProps) {
   
   return (
     <article
-      className="flex flex-col sm:flex-row bg-card rounded-lg overflow-hidden border border-border shadow-sm hover:shadow-md transition-shadow duration-200 group cursor-pointer"
+      className="flex flex-col sm:min-h-[200px] sm:flex-row bg-card rounded-lg overflow-hidden border border-border shadow-sm hover:shadow-md transition-shadow duration-200 group cursor-pointer"
       onClick={() => navigate(buildArticlePath(post))}
     >
-      {/* Imagem */}
-     <div className="sm:w-72 w-full h-48 sm:h-auto sm:min-h-[200px] flex-shrink-0 overflow-hidden">
+      <div className="h-[200px] w-full flex-shrink-0 overflow-hidden sm:h-[200px] sm:w-[288px]">
         <img
           src={resolveImageUrl(post.imagemCapaUrl, post.imagemCapaId)}
           alt={post.titulo}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />
       </div>
- 
-      {/* Conteúdo */}
+
       <div className="flex flex-col justify-between flex-1 p-5 gap-3">
         <div className="space-y-2">
           <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">

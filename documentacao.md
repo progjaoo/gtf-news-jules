@@ -678,5 +678,5 @@ Fase 4 - Gestão
  Logs de atividades
  Relatórios
 
-**Documentação criada em**: 15/12/2024
+**Documentação criada em**: 15/12/2025
 **Versão**: 1.0

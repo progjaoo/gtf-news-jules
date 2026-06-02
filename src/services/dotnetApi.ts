@@ -18,6 +18,7 @@ export interface PostApi {
   emissoraSlug?: string;
   cidade: string;
   totalVisualizacoes?: number;
+  tags?: string[];
 }
 
 export interface TemaEditorialApi {
@@ -72,8 +73,6 @@ export interface EmissoraApi {
   temaPrincipal: string;
   ativa: boolean;
 }
-
-
 // dotnetApi.ts
 export function resolveImageUrl(url?: string | null, id?: number | null): string {
   if (url) return url;
